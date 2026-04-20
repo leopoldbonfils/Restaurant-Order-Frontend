@@ -1,0 +1,74 @@
+.page { min-height: 100vh; background: var(--bg); }
+.page-inner { max-width: 1100px; margin: 0 auto; padding: 24px; }
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.page-title { font-size: 20px; font-weight: 700; color: var(--gray-900); }
+.page-sub   { font-size: 13px; color: var(--gray-500); margin-top: 2px; }
+
+.customer-pills { display: flex; gap: 8px; }
+
+.pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--gray-600);
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+
+.pill-amber {
+  background: var(--amber-light);
+  border-color: #fde68a;
+  color: var(--amber);
+}
+
+.customer-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.customer-menu { flex: 1; min-width: 0; }
+
+.past-orders { margin-top: 40px; }
+.past-orders-title { font-size: 14px; font-weight: 700; color: var(--gray-700); margin-bottom: 12px; }
+
+.past-orders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.past-order-card {
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-xl);
+  padding: 16px;
+}
+
+.past-order-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.past-order-id     { font-size: 13px; font-weight: 600; color: var(--gray-800); }
+.past-order-date   { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+.past-order-status { font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 999px; }
+.past-order-status.paid      { background: var(--teal-light);  color: var(--teal); }
+.past-order-status.cancelled { background: var(--red-light);   color: var(--red);  }
+
+.past-order-items { font-size: 12px; color: var(--gray-500); margin-bottom: 8px; }
+.past-order-total { font-size: 14px; font-weight: 700; color: var(--gray-900); }
+.past-order-total span { font-size: 11px; font-weight: 400; color: var(--gray-400); }

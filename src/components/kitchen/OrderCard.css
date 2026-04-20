@@ -1,0 +1,70 @@
+.order-card {
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-xl);
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: box-shadow 0.15s;
+}
+
+.order-card:hover { box-shadow: var(--shadow-sm); }
+.order-card.urgent { border-color: #fecaca; }
+
+.order-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.order-card-table  { font-size: 14px; font-weight: 700; color: var(--gray-900); }
+.order-card-time   { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+.order-card-time.urgent-text { color: var(--red); font-weight: 500; }
+
+.order-card-right  { text-align: right; }
+.order-card-amount { font-size: 13px; font-weight: 700; color: var(--blue); }
+.order-card-id     { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+
+.order-card-items  { margin-bottom: 12px; display: flex; flex-direction: column; gap: 6px; }
+
+.order-card-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--gray-700);
+}
+
+.order-card-qty  { color: var(--blue); font-weight: 600; }
+.order-card-note { color: var(--gray-400); font-style: italic; font-size: 11px; }
+
+.order-card-special {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  background: var(--amber-light);
+  border-radius: var(--radius);
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: #92400e;
+}
+
+.order-card-btn {
+  width: 100%;
+  padding: 10px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--white);
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.order-card-btn:active { transform: scale(0.98); }
+.btn-blue   { background: var(--blue);   }
+.btn-blue:hover   { background: var(--blue-dark); }
+.btn-green  { background: var(--green);  }
+.btn-green:hover  { background: #15803d; }
+.btn-purple { background: var(--purple); }
+.btn-purple:hover { background: #6d28d9; }
+.btn-teal   { background: var(--teal);   }
+.btn-teal:hover   { background: #0f766e; }

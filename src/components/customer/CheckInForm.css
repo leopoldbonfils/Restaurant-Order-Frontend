@@ -1,0 +1,68 @@
+.checkin-card {
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.checkin-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.checkin-icon {
+  width: 40px; height: 40px;
+  background: var(--blue-light);
+  border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.checkin-title { font-size: 14px; font-weight: 600; color: var(--gray-900); }
+.checkin-sub   { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+
+.checkin-row {
+  display: flex;
+  gap: 8px;
+}
+
+.checkin-input {
+  flex: 1;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.checkin-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+
+.checkin-select {
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  font-size: 13px;
+  outline: none;
+  background: var(--white);
+  cursor: pointer;
+}
+
+.checkin-btn {
+  background: var(--blue);
+  color: var(--white);
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-weight: 500;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.checkin-btn:hover:not(:disabled) { background: var(--blue-dark); }
+.checkin-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.checkin-error { font-size: 12px; color: var(--red); margin-top: 8px; }

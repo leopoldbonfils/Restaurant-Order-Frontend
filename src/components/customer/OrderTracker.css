@@ -1,0 +1,113 @@
+.tracker-card {
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-left: 3px solid var(--blue);
+  border-radius: var(--radius-xl);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.tracker-cancelled {
+  background: var(--red-light);
+  border: 1px solid #fecaca;
+  border-radius: var(--radius-xl);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+.tracker-cancelled-title { font-size: 13px; font-weight: 600; color: var(--red); }
+.tracker-cancelled-sub   { font-size: 12px; color: #b91c1c; margin-top: 4px; }
+
+.tracker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.tracker-order-id { font-size: 14px; font-weight: 600; color: var(--gray-900); }
+.tracker-live      { font-size: 12px; font-weight: 400; color: var(--gray-400); }
+.tracker-eta       { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+
+.tracker-status-pill {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+
+.tracker-status-pending   { background: var(--amber-light); color: var(--amber); }
+.tracker-status-preparing { background: var(--blue-light);  color: var(--blue); }
+.tracker-status-ready     { background: var(--green-light); color: var(--green); }
+.tracker-status-delivered { background: var(--purple-light);color: var(--purple); }
+.tracker-status-paid      { background: var(--teal-light);  color: var(--teal); }
+
+.tracker-steps {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.tracker-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.tracker-step-circle {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.tracker-step-circle.done    { background: var(--green);      color: var(--white); font-size: 16px; }
+.tracker-step-circle.active  { background: var(--blue-light); color: var(--blue);  }
+.tracker-step-circle.pending { background: var(--gray-100);   color: var(--gray-300); }
+
+.tracker-step-label {
+  font-size: 11px;
+  font-weight: 500;
+  margin-top: 6px;
+  text-align: center;
+  width: 56px;
+  line-height: 1.3;
+}
+
+.tracker-step-label.done    { color: var(--green); }
+.tracker-step-label.active  { color: var(--gray-800); }
+.tracker-step-label.pending { color: var(--gray-300); }
+
+.tracker-line {
+  flex: 1;
+  height: 2px;
+  background: var(--gray-100);
+  margin-top: 15px;
+  margin-left: 2px;
+  margin-right: 2px;
+  transition: background 0.3s;
+}
+
+.tracker-line.done { background: var(--green); }
+
+.tracker-msg {
+  font-size: 12px;
+  color: var(--gray-500);
+  background: var(--gray-50);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  margin-bottom: 12px;
+}
+
+.tracker-items { display: flex; flex-wrap: wrap; gap: 4px; }
+
+.tracker-item-chip {
+  font-size: 12px;
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  color: var(--gray-600);
+}
