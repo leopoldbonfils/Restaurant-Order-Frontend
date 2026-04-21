@@ -1,141 +1,403 @@
-.login-page {
+/* ── Page shell ──────────────────────────────────────────────────────────── */
+.lp-page {
+  display: flex;
   min-height: 100vh;
-  background: var(--bg);
+  background: var(--white);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   LEFT PANEL
+══════════════════════════════════════════════════════════════════════════ */
+.lp-left {
+  width: 400px;
+  flex-shrink: 0;
+  background: #faf9f7;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--gray-100);
+}
+
+.lp-left-inner {
+  flex: 1;
+  padding: 48px 40px 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Brand block */
+.lp-brand {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.lp-brand-icon {
+  width: 52px;
+  height: 52px;
+  background: #c0392b;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  font-size: 24px;
+  margin: 0 auto 12px;
+  box-shadow: 0 4px 12px rgba(192, 57, 43, 0.35);
 }
 
-.login-wrap { width: 100%; max-width: 380px; }
-
-.login-back {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: var(--gray-500);
-  margin-bottom: 24px;
-  transition: color 0.15s;
-}
-
-.login-back:hover { color: var(--gray-800); }
-
-.login-card {
-  background: var(--white);
-  border: 1px solid var(--gray-100);
-  border-radius: 24px;
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-}
-
-.login-card-header {
-  padding: 32px 32px 24px;
-  text-align: center;
-  border-bottom: 1px solid var(--gray-50);
-}
-
-.login-icons { display: flex; justify-content: center; gap: 12px; margin-bottom: 20px; }
-
-.login-icon-box {
-  width: 44px; height: 44px;
-  background: var(--blue-light);
-  border-radius: var(--radius-lg);
-  display: flex; align-items: center; justify-content: center;
+.lp-brand-name {
   font-size: 20px;
+  font-weight: 700;
+  color: var(--gray-900);
+  letter-spacing: -0.3px;
+  margin-bottom: 4px;
 }
 
-.login-title { font-size: 18px; font-weight: 700; color: var(--gray-900); }
-.login-sub   { font-size: 13px; color: var(--gray-500); margin-top: 4px; }
+.lp-brand-sub {
+  font-size: 12px;
+  color: var(--gray-400);
+}
 
-.login-form { padding: 24px 32px; display: flex; flex-direction: column; gap: 16px; }
+/* Form */
+.lp-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 28px;
+}
 
-.login-field { display: flex; flex-direction: column; gap: 6px; }
+.lp-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
 
-.login-label { font-size: 12px; font-weight: 600; color: var(--gray-600); }
+.lp-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-600);
+}
 
-.login-input {
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius);
-  padding: 12px 16px;
-  font-size: 13px;
-  outline: none;
+/* Select */
+.lp-select-wrap {
+  position: relative;
+}
+
+.lp-select {
   width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  padding: 11px 36px 11px 14px;
+  font-size: 13px;
+  color: var(--gray-800);
+  background: var(--white);
+  outline: none;
+  cursor: pointer;
   transition: border-color 0.15s;
 }
 
-.login-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+.lp-select:focus {
+  border-color: #c0392b;
+  box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.1);
+}
 
-.login-pwd-wrap { position: relative; }
-.login-pwd-wrap .login-input { padding-right: 44px; }
-
-.login-pwd-toggle {
+.lp-select-arrow {
   position: absolute;
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 16px;
+  font-size: 11px;
   color: var(--gray-400);
-  padding: 4px;
+  pointer-events: none;
 }
 
-.login-error {
+/* Inputs */
+.lp-input {
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  padding: 11px 14px;
+  font-size: 13px;
+  color: var(--gray-800);
+  background: var(--white);
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.lp-input::placeholder { color: var(--gray-300); }
+
+.lp-input:focus {
+  border-color: #c0392b;
+  box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.1);
+}
+
+.lp-pwd-wrap {
+  position: relative;
+}
+
+.lp-pwd-wrap .lp-input {
+  padding-right: 44px;
+}
+
+.lp-eye {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 15px;
+  color: var(--gray-400);
+  padding: 4px;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+/* Remember me + Forgot */
+.lp-row-aux {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: -4px;
+}
+
+.lp-remember {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.lp-checkbox { display: none; }
+
+.lp-checkbox-box {
+  width: 15px; height: 15px;
+  border: 1.5px solid var(--gray-300);
+  border-radius: 4px;
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.lp-checkbox:checked + .lp-checkbox-box {
+  background: #c0392b;
+  border-color: #c0392b;
+}
+
+.lp-checkbox:checked + .lp-checkbox-box::after {
+  content: '✓';
+  font-size: 9px;
+  color: white;
+  font-weight: 800;
+}
+
+.lp-remember-label {
+  font-size: 12px;
+  color: var(--gray-500);
+}
+
+.lp-forgot {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c0392b;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.lp-forgot:hover { text-decoration: underline; }
+
+/* Error */
+.lp-error {
   font-size: 12px;
   color: #991b1b;
   background: var(--red-light);
   border: 1px solid #fecaca;
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   padding: 10px 14px;
 }
 
-.login-submit-btn {
-  background: var(--blue);
+/* Submit */
+.lp-submit {
+  width: 100%;
+  background: #c0392b;
   color: var(--white);
-  padding: 14px;
-  border-radius: var(--radius);
+  padding: 13px;
+  border-radius: var(--radius-sm);
   font-size: 14px;
   font-weight: 600;
+  letter-spacing: 0.2px;
   transition: background 0.15s, transform 0.1s;
+  border: none;
+  cursor: pointer;
+  margin-top: 4px;
 }
 
-.login-submit-btn:hover:not(:disabled) { background: var(--blue-dark); }
-.login-submit-btn:active:not(:disabled) { transform: scale(0.98); }
-.login-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.lp-submit:hover:not(:disabled) { background: #a93226; }
+.lp-submit:active:not(:disabled) { transform: scale(0.99); }
+.lp-submit:disabled { opacity: 0.55; cursor: not-allowed; }
 
-.login-demo {
-  margin: 0 32px 28px;
-  background: var(--gray-50);
-  border: 1px solid var(--gray-100);
-  border-radius: var(--radius-lg);
-  padding: 16px;
+/* Create account section */
+.lp-create {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.login-demo-title { font-size: 11px; font-weight: 600; color: var(--gray-500); margin-bottom: 10px; }
+.lp-create-label {
+  font-size: 13px;
+  color: var(--gray-400);
+}
 
-.login-demo-rows { display: flex; flex-direction: column; gap: 8px; }
+.lp-create-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--gray-200);
+  background: var(--white);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-700);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
 
-.login-demo-row {
+.lp-create-btn:hover {
+  border-color: #c0392b;
+  color: #c0392b;
+  background: rgba(192, 57, 43, 0.04);
+}
+
+/* Footer */
+.lp-footer {
+  padding: 16px 40px;
+  border-top: 1px solid var(--gray-100);
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  color: var(--gray-500);
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
-.login-demo-row code { font-family: monospace; }
+.lp-footer-brand {
+  font-size: 12px;
+  font-weight: 700;
+  color: #c0392b;
+  flex-shrink: 0;
+}
 
-.login-demo-note {
+.lp-footer-links {
+  display: flex;
+  gap: 12px;
+  flex: 1;
+}
+
+.lp-footer-link {
   font-size: 11px;
   color: var(--gray-400);
-  margin-top: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  white-space: nowrap;
 }
 
-.login-demo-note code {
-  font-family: monospace;
-  background: var(--white);
-  border: 1px solid var(--gray-200);
-  padding: 2px 6px;
-  border-radius: 4px;
+.lp-footer-link:hover { color: var(--gray-700); }
+
+.lp-footer-copy {
   font-size: 11px;
-  color: var(--gray-500);
+  color: var(--gray-300);
+  white-space: nowrap;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   RIGHT PANEL
+══════════════════════════════════════════════════════════════════════════ */
+.lp-right {
+  flex: 1;
+  position: relative;
+  background:
+    url('https://images.unsplash.com/photo-1552566626-52f8b828add9?w=1200&q=80')
+    center/cover no-repeat;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  padding: 48px;
+}
+
+.lp-right-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(20, 15, 10, 0.35) 0%,
+    rgba(10, 8, 5, 0.72) 100%
+  );
+  z-index: 0;
+}
+
+.lp-right-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+.lp-hero-card {
+  background: rgba(30, 20, 10, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-xl);
+  padding: 32px 36px;
+  max-width: 480px;
+}
+
+.lp-hero-headline {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: -0.8px;
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+
+.lp-hero-sub {
+  font-size: 13px;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.7;
+  margin-bottom: 28px;
+}
+
+.lp-stats {
+  display: flex;
+  gap: 36px;
+}
+
+.lp-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lp-stat-value {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: -0.5px;
+}
+
+.lp-stat-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .lp-right { display: none; }
+  .lp-left  { width: 100%; }
 }
