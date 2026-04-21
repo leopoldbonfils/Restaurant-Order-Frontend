@@ -1,69 +1,131 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import './OrderCard.css'
 
-const ACTION = {
-  PENDING:   { label: 'Start cooking',   cls: 'btn-blue',   next: 'PREPARING' },
-  PREPARING: { label: 'Mark ready',      cls: 'btn-green',  next: 'READY'     },
-  READY:     { label: 'Mark delivered',  cls: 'btn-purple', next: 'DELIVERED' },
-  DELIVERED: { label: 'Confirm payment', cls: 'btn-teal',   next: 'PAID'      },
+function useElapsed(createdAt) {
+  const [elapsed, setElapsed] = useState(0)
+  useEffect(() => {
+    const tick = () => {
+      if (!createdAt) return
+      setElapsed(Math.floor((Date.now() - new Date(createdAt)) / 60000))
+    }
+    tick()
+    const id = setInterval(tick, 30000)
+    return () => clearInterval(id)
+  }, [createdAt])
+  return elapsed
 }
 
-function timeAgo(iso) {
-  if (!iso) return ''
-  const mins = Math.floor((Date.now() - new Date(iso)) / 60000)
+function elapsedLabel(mins) {
   if (mins < 1)   return 'just now'
-  if (mins === 1) return '1 min ago'
-  return `${mins} min ago`
+  if (mins === 1) return '1m ago'
+  return `${mins}m ago`
 }
 
-export default function OrderCard({ order, onAdvance }) {
-  const action = ACTION[order.status]
-  const elapsedMins = order.createdAt
-    ? Math.floor((Date.now() - new Date(order.createdAt)) / 60000) : 0
-  const isUrgent = elapsedMins >= 20 && order.status === 'PENDING'
+export default function KitchenOrderCard({ order, onAdvance }) {
+  const elapsed  = useElapsed(order.createdAt)
+  const isUrgent = elapsed >= 20 && order.status === 'PENDING'
+
+  const cardClass = [
+    'koc-card',
+    order.status === 'PENDING'   ? 'koc-pending'   : '',
+    order.status === 'PREPARING' ? 'koc-preparing'  : '',
+    order.status === 'READY'     ? 'koc-ready'      : '',
+    isUrgent                     ? 'koc-urgent'     : '',
+  ].filter(Boolean).join(' ')
+
+  /* Progress bar width for PREPARING (assume 20-min target) */
+  const progress = order.status === 'PREPARING'
+    ? Math.min(100, Math.round((elapsed / (order.estimatedPrepMinutes || 20)) * 100))
+    : 0
 
   return (
-    <div className={`order-card ${isUrgent ? 'urgent' : ''}`}>
-      <div className="order-card-header">
-        <div>
-          <p className="order-card-table">{order.tableNumber}</p>
-          <p className={`order-card-time ${isUrgent ? 'urgent-text' : ''}`}>
-            🕐 {timeAgo(order.createdAt)}{isUrgent && ' — urgent!'}
-          </p>
+    <div className={cardClass}>
+
+      {/* Header row */}
+      <div className="koc-header">
+        <div className="koc-table-wrap">
+          <span className="koc-table">{order.tableNumber?.replace('Table ', 'T-') || `#${order.id}`}</span>
+          {order.status === 'READY' && <span className="koc-ready-check">✓</span>}
         </div>
-        <div className="order-card-right">
-          <p className="order-card-amount">{order.totalAmount?.toLocaleString()} RWF</p>
-          <p className="order-card-id">#{order.id}</p>
+        <div className="koc-meta">
+          {order.status === 'PENDING' && (
+            <span className="koc-badge koc-badge-received">RECEIVED</span>
+          )}
+          {order.status === 'PREPARING' && (
+            <span className="koc-badge koc-badge-progress">IN PROGRESS</span>
+          )}
+          {order.status === 'READY' && (
+            <span className="koc-badge koc-badge-ready">READY SINCE</span>
+          )}
+          <span className="koc-time">{elapsedLabel(elapsed)}</span>
         </div>
       </div>
 
-      <div className="order-card-items">
+      {/* Progress bar — only for PREPARING */}
+      {order.status === 'PREPARING' && (
+        <div className="koc-progress-wrap">
+          <div className="koc-progress-bar">
+            <div
+              className="koc-progress-fill"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+          <span className="koc-progress-label">{elapsed}m elapsed</span>
+        </div>
+      )}
+
+      {/* Items */}
+      <div className="koc-items">
         {(order.items || []).map((item, i) => (
-          <div key={i} className="order-card-item">
-            <span>
-              <span className="order-card-qty">{item.quantity}×</span> {item.menuItemName}
-            </span>
+          <div key={i} className="koc-item">
+            <span className="koc-item-qty">{item.quantity}×</span>
+            <span className="koc-item-name">{item.menuItemName}</span>
             {item.itemNotes && (
-              <span className="order-card-note">{item.itemNotes}</span>
+              <span className="koc-item-note">{item.itemNotes}</span>
             )}
           </div>
         ))}
       </div>
 
+      {/* Special instructions */}
       {order.specialRequests && (
-        <div className="order-card-special">
-          <span>💬</span>
-          <p>{order.specialRequests}</p>
+        <div className="koc-instructions">
+          <p className="koc-instructions-label">⚡ INSTRUCTIONS</p>
+          <p className="koc-instructions-text">{order.specialRequests}</p>
         </div>
       )}
 
-      {action && (
+      {/* Action buttons */}
+      {order.status === 'PENDING' && (
         <button
-          onClick={() => onAdvance(order.id, action.next)}
-          className={`order-card-btn ${action.cls}`}
+          onClick={() => onAdvance(order.id, 'PREPARING')}
+          className="koc-btn koc-btn-start"
         >
-          {action.label}
+          Start Preparing
         </button>
+      )}
+
+      {order.status === 'PREPARING' && (
+        <button
+          onClick={() => onAdvance(order.id, 'READY')}
+          className="koc-btn koc-btn-ready"
+        >
+          Mark as Ready
+        </button>
+      )}
+
+      {order.status === 'READY' && (
+        <div className="koc-btn-row">
+          <button className="koc-btn koc-btn-print">
+            Print Tag
+          </button>
+          <button
+            onClick={() => onAdvance(order.id, 'DELIVERED')}
+            className="koc-btn koc-btn-clear"
+          >
+            Clear
+          </button>
+        </div>
       )}
     </div>
   )

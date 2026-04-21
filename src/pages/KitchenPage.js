@@ -1,15 +1,32 @@
 import React, { useState, useEffect, useContext, useCallback } from 'react'
 import { ToastContext } from '../App'
-import KanbanBoard from '../components/kitchen/KanbanBoard'
+import KitchenKanban from '../components/kitchen/KanbanBoard'
 import { getActiveOrders, updateOrderStatus } from '../api/orders'
 import { connectWebSocket, disconnectWebSocket } from '../api/websocket'
 import './KitchenPage.css'
 
+const NAV = [
+  { key: 'orders',    label: 'Orders',    icon: '◫' },
+  { key: 'inventory', label: 'Inventory', icon: '⊟' },
+  { key: 'history',   label: 'History',   icon: '◷' },
+  { key: 'reports',   label: 'Reports',   icon: '⊞' },
+]
+
 export default function KitchenPage() {
   const showToast = useContext(ToastContext)
-  const [orders,  setOrders]  = useState([])
-  const [loading, setLoading] = useState(true)
+  const [orders,      setOrders]      = useState([])
+  const [loading,     setLoading]     = useState(true)
+  const [activeNav,   setActiveNav]   = useState('orders')
+  const [activeTab,   setActiveTab]   = useState('orders')
+  const [searchQuery, setSearchQuery] = useState('')
   const [lastRefresh, setLastRefresh] = useState(null)
+  const [clock,       setClock]       = useState(new Date())
+
+  /* Live clock */
+  useEffect(() => {
+    const id = setInterval(() => setClock(new Date()), 1000)
+    return () => clearInterval(id)
+  }, [])
 
   const fetchOrders = useCallback(async (silent = false) => {
     if (!silent) setLoading(true)
@@ -35,7 +52,8 @@ export default function KitchenPage() {
     connectWebSocket({
       onOrderUpdate: (event) => {
         fetchOrders(true)
-        if (event.newStatus === 'PENDING') showToast(`New order from ${event.tableNumber}!`, 'info')
+        if (event.newStatus === 'PENDING')
+          showToast(`🔔 New order from ${event.tableNumber}!`, 'info')
       },
     })
     return () => disconnectWebSocket()
@@ -45,13 +63,13 @@ export default function KitchenPage() {
     try {
       await updateOrderStatus(orderId, newStatus)
       setOrders((prev) =>
-        newStatus === 'PAID'
+        newStatus === 'DELIVERED'
           ? prev.filter((o) => o.id !== orderId)
           : prev.map((o) => o.id === orderId ? { ...o, status: newStatus } : o)
       )
-      if (newStatus === 'READY') showToast('Order marked as ready — waiter notified.', 'success')
+      if (newStatus === 'READY') showToast('✅ Order ready — waiter notified!', 'success')
     } catch (e) {
-      showToast(e.message || 'Failed to update status.', 'error')
+      showToast(e.message || 'Failed to update.', 'error')
     }
   }, [showToast])
 
@@ -61,54 +79,112 @@ export default function KitchenPage() {
     READY:     orders.filter((o) => o.status === 'READY').length,
   }
 
+  const filteredOrders = searchQuery.trim()
+    ? orders.filter((o) =>
+        o.tableNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        o.items?.some((i) => i.menuItemName?.toLowerCase().includes(searchQuery.toLowerCase()))
+      )
+    : orders
+
   return (
-    <div className="page kitchen-page">
-      <div className="page-inner-wide">
-        <div className="page-header">
-          <div className="kitchen-title-wrap">
-            <div className="kitchen-icon">👨‍🍳</div>
-            <div>
-              <h1 className="page-title">Kitchen display</h1>
-              <p className="page-sub">
-                Live board · {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                {lastRefresh && (
-                  <span className="kitchen-refresh-time">
-                    · refreshed {lastRefresh.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
-                )}
-              </p>
-            </div>
-          </div>
-          <div className="kitchen-header-right">
-            <div className="kitchen-pills">
-              {counts.PENDING > 0   && <span className="kitchen-pill amber">{counts.PENDING} new</span>}
-              {counts.PREPARING > 0 && <span className="kitchen-pill blue">{counts.PREPARING} cooking</span>}
-              {counts.READY > 0     && <span className="kitchen-pill green">{counts.READY} ready</span>}
-            </div>
-            <button
-              onClick={() => fetchOrders()}
-              disabled={loading}
-              className="refresh-btn"
-            >
-              {loading ? '...' : '↻ Refresh'}
-            </button>
+    <div className="kos-shell">
+
+      {/* ── Left sidebar ─────────────────────────────────────── */}
+      <aside className="kos-sidebar">
+        <div className="kos-sidebar-brand">
+          <div className="kos-brand-icon">🍴</div>
+          <div>
+            <p className="kos-brand-name">Kitchen OS</p>
           </div>
         </div>
 
-        {loading && orders.length === 0 ? (
-          <div className="kitchen-loading">
-            <p className="kitchen-loading-icon">⏳</p>
-            <p>Loading orders…</p>
+        <div className="kos-station">
+          <div className="kos-station-icon">🖥</div>
+          <div>
+            <p className="kos-station-name">Station 1</p>
+            <p className="kos-station-sub">Main Kitchen</p>
           </div>
-        ) : orders.length === 0 ? (
-          <div className="kitchen-empty">
-            <p className="kitchen-empty-icon">🍽</p>
-            <p className="kitchen-empty-title">No active orders</p>
-            <p className="kitchen-empty-sub">New orders will appear here automatically</p>
+        </div>
+
+        <nav className="kos-nav">
+          {NAV.map((item) => (
+            <button
+              key={item.key}
+              onClick={() => setActiveNav(item.key)}
+              className={`kos-nav-item ${activeNav === item.key ? 'active' : ''}`}
+            >
+              <span className="kos-nav-icon">{item.icon}</span>
+              <span className="kos-nav-label">{item.label}</span>
+            </button>
+          ))}
+        </nav>
+
+        <div className="kos-sidebar-footer">
+          <button className="kos-footer-btn">
+            <span>⚙</span> Support
+          </button>
+          <button className="kos-footer-btn kos-logout">
+            <span>↩</span> Logout
+          </button>
+        </div>
+      </aside>
+
+      {/* ── Main area ────────────────────────────────────────── */}
+      <div className="kos-main">
+
+        {/* Top bar */}
+        <header className="kos-topbar">
+          <div className="kos-tabs">
+            {['orders', 'inventory', 'history'].map((t) => (
+              <button
+                key={t}
+                onClick={() => setActiveTab(t)}
+                className={`kos-tab ${activeTab === t ? 'active' : ''}`}
+              >
+                {t.charAt(0).toUpperCase() + t.slice(1)}
+              </button>
+            ))}
           </div>
-        ) : (
-          <KanbanBoard orders={orders} onAdvance={handleAdvance} />
-        )}
+
+          <div className="kos-topbar-right">
+            <div className="kos-search-wrap">
+              <span className="kos-search-icon">🔍</span>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search orders..."
+                className="kos-search"
+              />
+            </div>
+            <button className="kos-icon-btn" onClick={() => fetchOrders(true)} title="Refresh">
+              🔔
+            </button>
+            <button className="kos-icon-btn">⚙</button>
+            <div className="kos-avatar">DK</div>
+          </div>
+        </header>
+
+        {/* Board */}
+        <div className="kos-board-wrap">
+          {loading && orders.length === 0 ? (
+            <div className="kos-loading">
+              <div className="kos-loading-spinner" />
+              <p>Loading orders…</p>
+            </div>
+          ) : (
+            <KitchenKanban
+              orders={filteredOrders}
+              onAdvance={handleAdvance}
+              counts={counts}
+            />
+          )}
+        </div>
+
+        {/* FAB */}
+        <button className="kos-fab" onClick={() => fetchOrders(true)} title="Refresh">
+          +
+        </button>
       </div>
     </div>
   )

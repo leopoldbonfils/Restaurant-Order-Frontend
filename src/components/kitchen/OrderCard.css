@@ -1,70 +1,219 @@
-.order-card {
-  background: var(--white);
-  border: 1px solid var(--gray-100);
-  border-radius: var(--radius-xl);
+/* ── Base card ────────────────────────────────────────────────────────────── */
+.koc-card {
+  background: #131920;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px;
   padding: 16px;
-  margin-bottom: 12px;
-  transition: box-shadow 0.15s;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  border-left-width: 3px;
+  border-left-style: solid;
 }
 
-.order-card:hover { box-shadow: var(--shadow-sm); }
-.order-card.urgent { border-color: #fecaca; }
+/* ── Status color accents ─────────────────────────────────────────────────── */
+.koc-pending   { border-left-color: #e05a2b; }
+.koc-preparing { border-left-color: #3b82f6; }
+.koc-ready     { border-left-color: #22c55e; }
 
-.order-card-header {
+.koc-urgent {
+  border-left-color: #ef4444 !important;
+  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.2);
+}
+
+/* ── Header ───────────────────────────────────────────────────────────────── */
+.koc-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
-.order-card-table  { font-size: 14px; font-weight: 700; color: var(--gray-900); }
-.order-card-time   { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
-.order-card-time.urgent-text { color: var(--red); font-weight: 500; }
-
-.order-card-right  { text-align: right; }
-.order-card-amount { font-size: 13px; font-weight: 700; color: var(--blue); }
-.order-card-id     { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
-
-.order-card-items  { margin-bottom: 12px; display: flex; flex-direction: column; gap: 6px; }
-
-.order-card-item {
+.koc-table-wrap {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.koc-table {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+.koc-pending   .koc-table  { color: #e05a2b; }
+.koc-preparing .koc-table  { color: #60a5fa; }
+.koc-ready     .koc-table  { color: #4ade80; }
+.koc-urgent    .koc-table  { color: #f87171 !important; }
+
+.koc-ready-check {
+  width: 22px; height: 22px;
+  background: #22c55e;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
   font-size: 12px;
-  color: var(--gray-700);
+  font-weight: 700;
+  color: white;
 }
 
-.order-card-qty  { color: var(--blue); font-weight: 600; }
-.order-card-note { color: var(--gray-400); font-style: italic; font-size: 11px; }
-
-.order-card-special {
+.koc-meta {
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.koc-badge {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.koc-badge-received { background: rgba(224, 90, 43, 0.15); color: #e05a2b; }
+.koc-badge-progress { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+.koc-badge-ready    { background: rgba(34, 197, 94, 0.15);  color: #4ade80; }
+
+.koc-time {
+  font-size: 10px;
+  color: #475569;
+}
+
+/* ── Progress bar ─────────────────────────────────────────────────────────── */
+.koc-progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.koc-progress-bar {
+  flex: 1;
+  height: 4px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.koc-progress-fill {
+  height: 100%;
+  background: #3b82f6;
+  border-radius: 2px;
+  transition: width 1s ease;
+}
+
+.koc-progress-label {
+  font-size: 10px;
+  color: #475569;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Items ────────────────────────────────────────────────────────────────── */
+.koc-items {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+
+.koc-item {
+  display: flex;
+  align-items: baseline;
   gap: 6px;
-  background: var(--amber-light);
-  border-radius: var(--radius);
-  padding: 8px 12px;
-  margin-bottom: 12px;
   font-size: 12px;
-  color: #92400e;
 }
 
-.order-card-btn {
-  width: 100%;
-  padding: 10px;
-  border-radius: var(--radius);
+.koc-item-qty {
+  font-weight: 700;
+  color: #94a3b8;
+  flex-shrink: 0;
+  min-width: 20px;
+}
+
+.koc-pending   .koc-item-qty { color: #fb923c; }
+.koc-preparing .koc-item-qty { color: #60a5fa; }
+.koc-ready     .koc-item-qty { color: #4ade80; }
+
+.koc-item-name {
+  color: #cbd5e1;
+  flex: 1;
+}
+
+.koc-item-note {
+  font-size: 10px;
+  color: #475569;
+  font-style: italic;
+}
+
+/* ── Instructions ─────────────────────────────────────────────────────────── */
+.koc-instructions {
+  background: rgba(224, 90, 43, 0.08);
+  border: 1px solid rgba(224, 90, 43, 0.2);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+
+.koc-instructions-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  color: #e05a2b;
+  margin-bottom: 4px;
+}
+
+.koc-instructions-text {
   font-size: 12px;
-  font-weight: 600;
-  color: var(--white);
+  color: #94a3b8;
+  line-height: 1.5;
+}
+
+/* ── Buttons ──────────────────────────────────────────────────────────────── */
+.koc-btn {
+  width: 100%;
+  padding: 11px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  border: none;
+  cursor: pointer;
   transition: opacity 0.15s, transform 0.1s;
 }
 
-.order-card-btn:active { transform: scale(0.98); }
-.btn-blue   { background: var(--blue);   }
-.btn-blue:hover   { background: var(--blue-dark); }
-.btn-green  { background: var(--green);  }
-.btn-green:hover  { background: #15803d; }
-.btn-purple { background: var(--purple); }
-.btn-purple:hover { background: #6d28d9; }
-.btn-teal   { background: var(--teal);   }
-.btn-teal:hover   { background: #0f766e; }
+.koc-btn:active { transform: scale(0.98); }
+
+.koc-btn-start {
+  background: #e05a2b;
+  color: white;
+}
+.koc-btn-start:hover { background: #c94d22; }
+
+.koc-btn-ready {
+  background: #16a34a;
+  color: white;
+}
+.koc-btn-ready:hover { background: #15803d; }
+
+.koc-btn-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.koc-btn-print {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  color: #94a3b8;
+}
+.koc-btn-print:hover { background: rgba(255,255,255,0.1); }
+
+.koc-btn-clear {
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.2) !important;
+  color: #4ade80;
+}
+.koc-btn-clear:hover { background: rgba(34, 197, 94, 0.2); }
