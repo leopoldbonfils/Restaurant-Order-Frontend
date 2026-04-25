@@ -8,6 +8,7 @@
   display: flex;
   flex-direction: column;
   z-index: 40;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
 .sidebar-brand {
@@ -97,6 +98,7 @@
   flex-shrink: 0;
 }
 
+/* ── Footer ─────────────────────────────────────────────────────────────── */
 .sidebar-footer {
   padding: 12px;
   border-top: 1px solid var(--gray-100);
@@ -105,6 +107,62 @@
   gap: 4px;
 }
 
+/* ── Theme toggle button ─────────────────────────────────────────────────── */
+.sidebar-theme-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--gray-500);
+  width: 100%;
+  transition: background 0.15s, color 0.15s;
+  border-bottom: 1px solid var(--gray-100);
+  margin-bottom: 4px;
+  padding-bottom: 14px;
+}
+
+.sidebar-theme-btn:hover {
+  background: var(--gray-50);
+  color: var(--gray-700);
+}
+
+.sidebar-theme-icon { font-size: 15px; flex-shrink: 0; }
+
+.sidebar-theme-label {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Small on/off pill indicator */
+.sidebar-theme-indicator {
+  width: 32px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--gray-200);
+  position: relative;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.sidebar-theme-indicator::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--white);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  transition: left 0.2s, background 0.2s;
+}
+
+.sidebar-theme-indicator.light::after { left: 3px; }
+.sidebar-theme-indicator.dark  { background: var(--blue); }
+.sidebar-theme-indicator.dark::after  { left: 17px; }
+
+/* ── User card ───────────────────────────────────────────────────────────── */
 .sidebar-user {
   display: flex;
   align-items: center;

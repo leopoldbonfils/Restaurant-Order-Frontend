@@ -1,38 +1,111 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ══════════════════════════════════════════════════════════════
+   LIGHT THEME (default)
+══════════════════════════════════════════════════════════════ */
 :root {
-  --blue:       #2563eb;
-  --blue-dark:  #1d4ed8;
-  --blue-light: #eff6ff;
-  --green:      #16a34a;
-  --green-light:#f0fdf4;
-  --amber:      #d97706;
-  --amber-light:#fffbeb;
-  --red:        #dc2626;
-  --red-light:  #fef2f2;
-  --purple:     #7c3aed;
-  --purple-light:#f5f3ff;
-  --teal:       #0d9488;
-  --teal-light: #f0fdfa;
-  --gray-50:    #f9fafb;
-  --gray-100:   #f3f4f6;
-  --gray-200:   #e5e7eb;
-  --gray-300:   #d1d5db;
-  --gray-400:   #9ca3af;
-  --gray-500:   #6b7280;
-  --gray-700:   #374151;
-  --gray-800:   #1f2937;
-  --gray-900:   #111827;
-  --white:      #ffffff;
-  --bg:         #f8f8f7;
-  --radius-sm:  8px;
-  --radius:     12px;
-  --radius-lg:  16px;
-  --radius-xl:  20px;
-  --shadow-sm:  0 1px 3px rgba(0,0,0,.08);
-  --shadow:     0 4px 12px rgba(0,0,0,.1);
+  /* Brand colors — unchanged in both modes */
+  --blue:         #2563eb;
+  --blue-dark:    #1d4ed8;
+  --blue-light:   #eff6ff;
+  --green:        #16a34a;
+  --green-light:  #f0fdf4;
+  --amber:        #d97706;
+  --amber-light:  #fffbeb;
+  --red:          #dc2626;
+  --red-light:    #fef2f2;
+  --purple:       #7c3aed;
+  --purple-light: #f5f3ff;
+  --teal:         #0d9488;
+  --teal-light:   #f0fdfa;
+
+  /* Neutral scale — these flip in dark mode */
+  --gray-50:   #f9fafb;
+  --gray-100:  #f3f4f6;
+  --gray-200:  #e5e7eb;
+  --gray-300:  #d1d5db;
+  --gray-400:  #9ca3af;
+  --gray-500:  #6b7280;
+  --gray-600:  #4b5563;
+  --gray-700:  #374151;
+  --gray-800:  #1f2937;
+  --gray-900:  #111827;
+
+  /* Surface & background */
+  --white:     #ffffff;
+  --bg:        #f8f8f7;
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius:    12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
+  --shadow:    0 4px 12px rgba(0,0,0,.10);
 }
 
+/* ══════════════════════════════════════════════════════════════
+   DARK THEME — override only surface/neutral tokens
+   Brand colors (blue, green, red …) stay the same;
+   their *-light variants become dark-tinted equivalents.
+══════════════════════════════════════════════════════════════ */
+[data-theme="dark"] {
+  /* Tinted accent backgrounds → dark versions */
+  --blue-light:   #1e3a5f;
+  --green-light:  #14321f;
+  --amber-light:  #3d2a00;
+  --red-light:    #3d1010;
+  --purple-light: #2d1e4d;
+  --teal-light:   #0d2e2a;
+
+  /* Neutral scale — inverted for dark mode */
+  --gray-50:   #1e2028;
+  --gray-100:  #252830;
+  --gray-200:  #2e3240;
+  --gray-300:  #404559;
+  --gray-400:  #6b7280;
+  --gray-500:  #9ca3af;
+  --gray-600:  #b0b7c3;
+  --gray-700:  #d1d5db;
+  --gray-800:  #e5e7eb;
+  --gray-900:  #f3f4f6;
+
+  /* Surfaces */
+  --white:     #1a1d25;
+  --bg:        #12141a;
+
+  /* Stronger shadows on dark */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.30);
+  --shadow:    0 4px 12px rgba(0,0,0,.40);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   SMOOTH THEME TRANSITION
+   Only background, color and border — not transforms/opacity
+   so hover animations remain snappy.
+══════════════════════════════════════════════════════════════ */
+html {
+  transition:
+    background-color 0.25s ease,
+    color            0.20s ease;
+}
+
+body,
+.sidebar,
+.page,
+.login-page,
+.main-content,
+.main-full {
+  transition:
+    background-color 0.25s ease,
+    border-color     0.25s ease;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   BASE STYLES
+══════════════════════════════════════════════════════════════ */
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: var(--bg);
@@ -42,6 +115,6 @@ body {
   line-height: 1.5;
 }
 
-button { cursor: pointer; border: none; background: none; font-family: inherit; }
+button    { cursor: pointer; border: none; background: none; font-family: inherit; }
 input, textarea, select { font-family: inherit; font-size: 14px; }
-a { text-decoration: none; color: inherit; }
+a         { text-decoration: none; color: inherit; }

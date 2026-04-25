@@ -7,7 +7,7 @@ const NAV_ITEMS = [
   { key: 'admin',    label: 'Admin',     icon: '📊', description: 'Dashboard',       requiresRole: 'ADMIN' },
 ]
 
-export default function Sidebar({ currentPage, onNavigate, auth, onLogout }) {
+export default function Sidebar({ currentPage, onNavigate, auth, onLogout, theme, onToggleTheme }) {
   const canAccess = (item) => {
     if (!item.requiresRole) return true
     if (!auth) return false
@@ -16,8 +16,11 @@ export default function Sidebar({ currentPage, onNavigate, auth, onLogout }) {
     return false
   }
 
+  const isDark = theme === 'dark'
+
   return (
     <aside className="sidebar">
+      {/* Brand */}
       <div className="sidebar-brand">
         <div className="sidebar-brand-icon">🍴</div>
         <div>
@@ -26,11 +29,12 @@ export default function Sidebar({ currentPage, onNavigate, auth, onLogout }) {
         </div>
       </div>
 
+      {/* Navigation */}
       <nav className="sidebar-nav">
         <p className="sidebar-nav-label">Portals</p>
         {NAV_ITEMS.map((item) => {
-          const active   = currentPage === item.key
-          const locked   = !canAccess(item)
+          const active = currentPage === item.key
+          const locked = !canAccess(item)
           return (
             <button
               key={item.key}
@@ -51,12 +55,21 @@ export default function Sidebar({ currentPage, onNavigate, auth, onLogout }) {
         })}
       </nav>
 
+      {/* Footer */}
       <div className="sidebar-footer">
+        {/* ── Theme toggle ──────────────────────────────────────────────── */}
+        <button className="sidebar-theme-btn" onClick={onToggleTheme} title="Toggle theme">
+          <span className="sidebar-theme-icon">{isDark ? '☀️' : '🌙'}</span>
+          <span className="sidebar-theme-label">{isDark ? 'Light mode' : 'Dark mode'}</span>
+          <span className={`sidebar-theme-indicator ${isDark ? 'dark' : 'light'}`} />
+        </button>
+
+        {/* ── User / login ─────────────────────────────────────────────── */}
         {auth ? (
           <>
             <div className="sidebar-user">
               <span className="sidebar-user-icon">
-                {auth.role === 'ADMIN' ? '🛡' : '👤'}
+                {auth.role === 'ADMIN' ? '🛡' : auth.role === 'KITCHEN' ? '👨‍🍳' : '👤'}
               </span>
               <div className="sidebar-user-info">
                 <p className="sidebar-user-email">{auth.email}</p>
