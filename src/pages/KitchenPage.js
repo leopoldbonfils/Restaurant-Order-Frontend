@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, useCallback } from 'react'
 import { ToastContext } from '../App'
 import KitchenKanban from '../components/kitchen/KanbanBoard'
 import { getActiveOrders, updateOrderStatus } from '../api/orders'
-import { connectWebSocket, disconnectWebSocket } from '../api/websocket'
+import { connectWebSocket, disconnectWebSocket, registerGlobalCallback, unregisterGlobalCallback } from '../api/websocket'
 import './KitchenPage.css'
 
 const NAV = [
@@ -12,14 +12,13 @@ const NAV = [
   { key: 'reports',   label: 'Reports',   icon: '⊞' },
 ]
 
-export default function KitchenPage() {
+export default function KitchenPage({ onLogout }) {
   const showToast = useContext(ToastContext)
   const [orders,      setOrders]      = useState([])
   const [loading,     setLoading]     = useState(true)
   const [activeNav,   setActiveNav]   = useState('orders')
   const [activeTab,   setActiveTab]   = useState('orders')
   const [searchQuery, setSearchQuery] = useState('')
-  const [lastRefresh, setLastRefresh] = useState(null)
   const [clock,       setClock]       = useState(new Date())
 
   /* Live clock */
@@ -33,7 +32,6 @@ export default function KitchenPage() {
     try {
       const res = await getActiveOrders()
       setOrders(res.data || [])
-      setLastRefresh(new Date())
     } catch {
       showToast('Failed to load orders.', 'error')
     } finally {
@@ -41,22 +39,39 @@ export default function KitchenPage() {
     }
   }, [showToast])
 
+  /* Initial load */
   useEffect(() => { fetchOrders() }, [fetchOrders])
 
+  /* Poll every 30 s as a safety net */
   useEffect(() => {
     const id = setInterval(() => fetchOrders(true), 30000)
     return () => clearInterval(id)
   }, [fetchOrders])
 
+  /* WebSocket — listen on /topic/orders for real-time updates */
   useEffect(() => {
+    const WS_KEY = 'kitchen-page'
+
     connectWebSocket({
       onOrderUpdate: (event) => {
         fetchOrders(true)
-        if (event.newStatus === 'PENDING')
+        if (event.newStatus === 'PENDING') {
           showToast(`🔔 New order from ${event.tableNumber}!`, 'info')
+        }
       },
     })
-    return () => disconnectWebSocket()
+
+    registerGlobalCallback(WS_KEY, (event) => {
+      fetchOrders(true)
+      if (event.newStatus === 'PENDING') {
+        showToast(`🔔 New order from ${event.tableNumber}!`, 'info')
+      }
+    })
+
+    return () => {
+      unregisterGlobalCallback(WS_KEY)
+      disconnectWebSocket()
+    }
   }, [fetchOrders, showToast])
 
   const handleAdvance = useCallback(async (orderId, newStatus) => {
@@ -123,7 +138,11 @@ export default function KitchenPage() {
           <button className="kos-footer-btn">
             <span>⚙</span> Support
           </button>
-          <button className="kos-footer-btn kos-logout">
+          {/* ── Logout wired to onLogout prop ── */}
+          <button
+            className="kos-footer-btn kos-logout"
+            onClick={onLogout}
+          >
             <span>↩</span> Logout
           </button>
         </div>
@@ -157,8 +176,12 @@ export default function KitchenPage() {
                 className="kos-search"
               />
             </div>
-            <button className="kos-icon-btn" onClick={() => fetchOrders(true)} title="Refresh">
-              🔔
+            <button
+              className="kos-icon-btn"
+              onClick={() => fetchOrders(true)}
+              title="Refresh"
+            >
+              🔄
             </button>
             <button className="kos-icon-btn">⚙</button>
             <div className="kos-avatar">DK</div>
@@ -182,7 +205,11 @@ export default function KitchenPage() {
         </div>
 
         {/* FAB */}
-        <button className="kos-fab" onClick={() => fetchOrders(true)} title="Refresh">
+        <button
+          className="kos-fab"
+          onClick={() => fetchOrders(true)}
+          title="Refresh"
+        >
           +
         </button>
       </div>

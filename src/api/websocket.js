@@ -3,15 +3,19 @@ import SockJS from 'sockjs-client'
 import { Client } from '@stomp/stompjs'
 
 /* ────────────────────────────────────────────────────────────────────── */
-/*  WebSocket client – singleton STOMP connection over SockJS          */
+/*  WebSocket client – singleton STOMP connection over SockJS           */
 /* ────────────────────────────────────────────────────────────────────── */
 
 let stompClient = null
-let socket = null
+let socket      = null
 let subscriptions = new Map()
 
 /**
  * Connect to the backend WebSocket and subscribe to topics.
+ *
+ * Backend publishes to:
+ *   /topic/orders          – all order events (kitchen board)
+ *   /topic/orders/{table}  – table-specific events (customer tracking)
  *
  * @param {Object}   options
  * @param {string}  [options.tableNumber]   – subscribe to table-specific topic
@@ -19,23 +23,20 @@ let subscriptions = new Map()
  */
 export function connectWebSocket({ tableNumber, onOrderUpdate }) {
   if (stompClient?.connected) {
-    // Already connected – just add subscription if needed
     if (tableNumber && onOrderUpdate) {
       subscribeToTable(tableNumber, onOrderUpdate)
     }
     return
   }
 
-  // Create SockJS socket
-  socket = new SockJS('/ws')
+  socket      = new SockJS('/ws')
   stompClient = new Client({
     webSocketFactory: () => socket,
-    reconnectDelay: 5000,
+    reconnectDelay:   5000,
     heartbeatIncoming: 4000,
     heartbeatOutgoing: 4000,
   })
 
-  // Disable debug logging in production
   stompClient.debug = (str) => {
     if (process.env.NODE_ENV === 'development') {
       console.log('[STOMP]', str)
@@ -45,18 +46,22 @@ export function connectWebSocket({ tableNumber, onOrderUpdate }) {
   stompClient.onConnect = () => {
     console.log('✅ WebSocket connected')
 
-    // Subscribe to kitchen broadcast (all staff)
-    stompClient.subscribe('/topic/kitchen', (message) => {
+    // ── Kitchen broadcast ─────────────────────────────────────────────────
+    // Backend publishes to /topic/orders — matches OrderNotificationService
+    stompClient.subscribe('/topic/orders', (message) => {
       try {
         const event = JSON.parse(message.body)
-        subscriptions.forEach((callback) => callback(event))
+        subscriptions.forEach((sub) => {
+          if (typeof sub.callback === 'function') sub.callback(event)
+        })
       } catch (e) {
         console.error('Failed to parse WebSocket message', e)
       }
     })
 
-    // Subscribe to table-specific topic
-    if (tableNumber) {
+    // ── Table-specific topic ──────────────────────────────────────────────
+    // Backend publishes to /topic/orders/{tableNumber}
+    if (tableNumber && onOrderUpdate) {
       subscribeToTable(tableNumber, onOrderUpdate)
     }
   }
@@ -69,12 +74,15 @@ export function connectWebSocket({ tableNumber, onOrderUpdate }) {
 }
 
 function subscribeToTable(tableNumber, onOrderUpdate) {
-  const topic = `/topic/table/${tableNumber}`
-  
-  // Remove existing subscription if any
+  // Backend: /topic/orders/{tableNumber} — see OrderNotificationService.java
+  const topic = `/topic/orders/${tableNumber}`
+
   if (subscriptions.has(topic)) {
-    subscriptions.get(topic).unsubscribe()
+    const existing = subscriptions.get(topic)
+    if (existing.sub) existing.sub.unsubscribe()
   }
+
+  if (!stompClient?.connected) return
 
   const sub = stompClient.subscribe(topic, (message) => {
     try {
@@ -85,18 +93,29 @@ function subscribeToTable(tableNumber, onOrderUpdate) {
     }
   })
 
-  subscriptions.set(topic, { unsubscribe: () => sub.unsubscribe() })
+  subscriptions.set(topic, { sub, callback: onOrderUpdate })
 }
 
 /**
- * Disconnect from the WebSocket.
+ * Register a callback for the global /topic/orders channel.
+ * Used by KitchenPage to receive all order events.
  */
+export function registerGlobalCallback(key, callback) {
+  subscriptions.set(key, { callback })
+}
+
+export function unregisterGlobalCallback(key) {
+  subscriptions.delete(key)
+}
+
 export function disconnectWebSocket() {
-  subscriptions.forEach((sub) => sub.unsubscribe())
+  subscriptions.forEach((entry) => {
+    if (entry.sub) entry.sub.unsubscribe()
+  })
   subscriptions.clear()
 
   if (stompClient) {
-    stompClient.disconnect()
+    stompClient.deactivate()
     stompClient = null
   }
   if (socket) {
@@ -124,8 +143,6 @@ export function disconnectWebSocket() {
 export function useWebSocket({ onOrderUpdate, tableNumber, enabled = true } = {}) {
   const [connected, setConnected] = useState(false)
 
-  /* Keep the latest callback in a ref so the effect doesn't re-run
-     when the parent re-renders and creates a new function reference. */
   const callbackRef = useRef(onOrderUpdate)
   useEffect(() => { callbackRef.current = onOrderUpdate }, [onOrderUpdate])
 

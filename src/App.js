@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
-import Sidebar    from './components/layout/Sidebar'
-import Toast      from './components/layout/Toast'
+import Sidebar       from './components/layout/Sidebar'
+import Toast         from './components/layout/Toast'
 import CustomerPage  from './pages/CustomerPage'
 import KitchenPage   from './pages/KitchenPage'
 import AdminPage     from './pages/AdminPage'
@@ -19,7 +19,7 @@ export default function App() {
   const [page,  setPage]  = useState('customer')
   const [toast, setToast] = useState(null)
 
-  /* ── Theme ────────────────────────────────────────────────────────────── */
+  // ── Theme ────────────────────────────────────────────────────────────────
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem('df_theme') || 'light'
     document.documentElement.setAttribute('data-theme', saved)
@@ -35,7 +35,7 @@ export default function App() {
     })
   }, [])
 
-  /* ── Auth ─────────────────────────────────────────────────────────────── */
+  // ── Auth ─────────────────────────────────────────────────────────────────
   const [auth, setAuth] = useState(() => {
     const token = localStorage.getItem('df_token')
     const role  = localStorage.getItem('df_role')
@@ -43,27 +43,25 @@ export default function App() {
     return token ? { token, role, email } : null
   })
 
-  /* ── Toast ────────────────────────────────────────────────────────────── */
+  // ── Toast ─────────────────────────────────────────────────────────────────
   const showToast = useCallback((message, type = 'info') => {
     setToast({ message, type })
     setTimeout(() => setToast(null), 4000)
   }, [])
 
-  /* ── Login / logout ────────────────────────────────────────────────────
-     Bug fix: after login, redirect to the correct portal for the role.
-  ────────────────────────────────────────────────────────────────────── */
+  // ── Login ─────────────────────────────────────────────────────────────────
   const handleLogin = useCallback(({ token, role, email }) => {
     localStorage.setItem('df_token', token)
     localStorage.setItem('df_role',  role)
     localStorage.setItem('df_email', email)
     setAuth({ token, role, email })
 
-    /* Role-based redirect */
-    if (role === 'ADMIN')   setPage('admin')
+    if (role === 'ADMIN')        setPage('admin')
     else if (role === 'KITCHEN') setPage('kitchen')
-    else                    setPage('customer')
+    else                         setPage('customer')
   }, [])
 
+  // ── Logout ────────────────────────────────────────────────────────────────
   const handleLogout = useCallback(() => {
     localStorage.removeItem('df_token')
     localStorage.removeItem('df_role')
@@ -72,7 +70,7 @@ export default function App() {
     setPage('customer')
   }, [])
 
-  /* ── Navigation ───────────────────────────────────────────────────────── */
+  // ── Navigation ────────────────────────────────────────────────────────────
   const navigateTo = useCallback((target) => {
     if (target === 'kitchen') {
       if (!auth || (auth.role !== 'KITCHEN' && auth.role !== 'ADMIN')) {
@@ -87,12 +85,15 @@ export default function App() {
     setPage(target)
   }, [auth])
 
-  /* ── Page renderer ────────────────────────────────────────────────────── */
+  // ── Page renderer ─────────────────────────────────────────────────────────
   const renderPage = () => {
     switch (page) {
-      case 'customer': return <CustomerPage />
-      case 'kitchen':  return <KitchenPage />
-      case 'admin':    return <AdminPage />
+      case 'customer':
+        return <CustomerPage />
+      case 'kitchen':
+        return <KitchenPage onLogout={handleLogout} />
+      case 'admin':
+        return <AdminPage onLogout={handleLogout} />
       case 'login':
         return (
           <LoginPage
@@ -108,7 +109,8 @@ export default function App() {
             onBack={() => setPage('login')}
           />
         )
-      default: return <CustomerPage />
+      default:
+        return <CustomerPage />
     }
   }
 
