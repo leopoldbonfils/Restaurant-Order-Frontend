@@ -134,4 +134,4 @@ The system is highly customizable:
 
 ---
 
-*Built with React, Vite, and Tailwind CSS for modern, responsive performance.*
+*Built with React for modern, responsive performance.*
