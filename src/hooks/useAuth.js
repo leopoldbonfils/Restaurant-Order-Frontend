@@ -10,7 +10,7 @@ export function useAuth() {
 
   const handleLogin = ({ token, role, email }) => {
     localStorage.setItem('df_token', token)
-    localStorage.setItem('df_role', role)
+    localStorage.setItem('df_role',  role)
     localStorage.setItem('df_email', email)
     setAuth({ token, role, email })
   }
