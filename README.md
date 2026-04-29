@@ -89,7 +89,7 @@ npm install
 
 2. **Run the development server:**
 ```bash
-npm run dev
+npm start
 ```
 
 3. **Open your browser:**
@@ -134,4 +134,4 @@ The system is highly customizable:
 
 ---
 
-*Built with React, Vite, and Tailwind CSS for modern, responsive performance.*
+*Built with React for modern, responsive performance.*
