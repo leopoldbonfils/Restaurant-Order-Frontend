@@ -19,21 +19,15 @@ export default function KitchenPage({ onLogout }) {
   const [activeNav,   setActiveNav]   = useState('orders')
   const [activeTab,   setActiveTab]   = useState('orders')
   const [searchQuery, setSearchQuery] = useState('')
-  const [clock,       setClock]       = useState(new Date())
-
-  /* Live clock */
-  useEffect(() => {
-    const id = setInterval(() => setClock(new Date()), 1000)
-    return () => clearInterval(id)
-  }, [])
 
   const fetchOrders = useCallback(async (silent = false) => {
     if (!silent) setLoading(true)
     try {
       const res = await getActiveOrders()
-      setOrders(res.data || [])
-    } catch {
-      showToast('Failed to load orders.', 'error')
+      setOrders(res?.data || res || [])
+    } catch (err) {
+      const errorMsg = err?.message || 'Failed to load orders.'
+      showToast(errorMsg, 'error')
     } finally {
       setLoading(false)
     }

@@ -40,28 +40,58 @@ export default function RegisterPage({ onSuccess, onBack }) {
   const set = (key) => (e) => setForm((p) => ({ ...p, [key]: e.target.value }))
 
   const validate = () => {
-    const e = {}
-    if (!form.fullName.trim())                         e.fullName = 'Full name is required'
-    if (!form.email.trim())                            e.email    = 'Email is required'
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Enter a valid email'
-    if (form.password.length < 6)                      e.password = 'Minimum 6 characters'
-    if (form.password !== form.confirmPassword)        e.confirmPassword = 'Passwords do not match'
-    if (!agreed)                                       e.agreed   = 'You must agree to the terms'
-    return e
+    const errors = {}
+    
+    if (!form.fullName.trim()) {
+      errors.fullName = 'Full name is required'
+    }
+    
+    if (!form.email.trim()) {
+      errors.email = 'Email is required'
+    } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(form.email)) {
+      errors.email = 'Please enter a valid email address'
+    }
+    
+    if (!form.password) {
+      errors.password = 'Password is required'
+    } else if (form.password.length < 6) {
+      errors.password = 'Password must be at least 6 characters'
+    }
+    
+    if (!form.confirmPassword) {
+      errors.confirmPassword = 'Please confirm your password'
+    } else if (form.password !== form.confirmPassword) {
+      errors.confirmPassword = 'Passwords do not match'
+    }
+    
+    if (!agreed) {
+      errors.agreed = 'You must agree to the terms and conditions'
+    }
+    
+    return errors
   }
 
   const handleSubmit = async () => {
-    const e = validate()
-    if (Object.keys(e).length) { setErrors(e); return }
+    const validationErrors = validate()
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors)
+      return
+    }
     setErrors({})
     setLoading(true)
     try {
       const res = await apiRegister(form.email, form.password, form.fullName, 'CUSTOMER')
-      const { token, role, email } = res.data
+      const { token, role, email } = res?.data || res
+      if (!token || !role) {
+        showToast('Invalid response from server', 'error')
+        return
+      }
       onSuccess({ token, role, email })
       showToast('Account created! Welcome to DineFlow 🎉', 'success')
     } catch (err) {
-      showToast(err.message || 'Registration failed. Please try again.', 'error')
+      const errorMsg = err?.response?.data?.message || err?.message || 'Registration failed. Please try again.'
+      showToast(errorMsg, 'error')
+      setErrors({ submit: errorMsg })
     } finally {
       setLoading(false)
     }

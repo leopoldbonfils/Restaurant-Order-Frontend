@@ -8,8 +8,15 @@ export function useMenu() {
 
   useEffect(() => {
     getAvailableMenu()
-      .then((res) => setMenuItems(res.data || []))
-      .catch((err) => setError(err.message))
+      .then((res) => {
+        setMenuItems(res?.data || res || [])
+        setError(null)
+      })
+      .catch((err) => {
+        const errorMsg = err?.message || 'Failed to load menu items'
+        setError(errorMsg)
+        console.error('Menu loading error:', err)
+      })
       .finally(() => setLoading(false))
   }, [])
 

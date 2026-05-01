@@ -25,14 +25,13 @@ export default function CustomerPage() {
   const [tableNumber,     setTableNumber]     = useState('')
   const [customerId,      setCustomerId]      = useState(null)
   const [loyaltyPts,      setLoyaltyPts]      = useState(0)
-  const [customerName,    setCustomerName]    = useState('')
   const [specialRequests, setSpecialRequests] = useState('')
   const [cartOpen,        setCartOpen]        = useState(false)
 
-  const { menuItems, categories, loading: menuLoading } = useMenu()
+  const { menuItems, categories, loading: menuLoading, error: menuError } = useMenu()
   const { cart, cartTotal, cartCount, addToCart, updateQty, removeFromCart, clearCart } = useCart()
   const {
-    myOrders, activeOrder, loading: orderLoading,
+    myOrders, activeOrder, loading: orderLoading, error: orderError,
     fetchMyOrders, submitOrder, setMyOrders,
   } = useOrders()
 
@@ -53,18 +52,38 @@ export default function CustomerPage() {
       },
     })
     return () => disconnectWebSocket()
-  }, [tableNumber])
+  }, [tableNumber, showToast])
 
   useEffect(() => {
     if (customerId) fetchMyOrders(customerId)
   }, [customerId, fetchMyOrders])
 
+  // Show menu errors
+  useEffect(() => {
+    if (menuError) {
+      showToast(`Menu error: ${menuError}`, 'error')
+    }
+  }, [menuError, showToast])
+
+  // Show order errors
+  useEffect(() => {
+    if (orderError) {
+      showToast(`Order error: ${orderError}`, 'error')
+    }
+  }, [orderError, showToast])
+
   const handleCheckIn = useCallback(async (table, language) => {
-    const res = await apiCheckIn(table, language)
-    setTableNumber(table)
-    setCustomerId(res.data.id)
-    setLoyaltyPts(res.data.loyaltyPoints || 0)
-    showToast(`Welcome! Checked in to ${table} 🎉`, 'success')
+    try {
+      const res = await apiCheckIn(table, language)
+      const { id, loyaltyPoints } = res?.data || res
+      setTableNumber(table)
+      setCustomerId(id)
+      setLoyaltyPts(loyaltyPoints || 0)
+      showToast(`Welcome! Checked in to ${table} 🎉`, 'success')
+    } catch (err) {
+      const errorMsg = err?.message || 'Check-in failed. Please try again.'
+      showToast(errorMsg, 'error')
+    }
   }, [showToast])
 
   const handlePlaceOrder = useCallback(async () => {
@@ -103,7 +122,7 @@ export default function CustomerPage() {
           </div>
           <div>
             <p className="bs-guest-name">
-              {customerId ? (customerName || 'Guest') : 'Bistro Luxe'}
+              {customerId ? 'Guest' : 'Bistro Luxe'}
             </p>
             <p className="bs-guest-sub">
               {tableNumber ? `${tableNumber}` : 'Premium Dining'}
@@ -213,7 +232,7 @@ export default function CustomerPage() {
           {activeNav === 'rewards' && (
             <BistroRewards
               loyaltyPts={loyaltyPts}
-              customerName={customerName || 'Alex'}
+              customerName='Guest'
               tableNumber={tableNumber}
               pastOrders={pastOrders}
             />

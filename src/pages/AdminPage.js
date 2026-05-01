@@ -7,7 +7,7 @@ import {
   AdminMenuTable,
 } from '../components/admin/AdminComponents'
 import { getAllOrders, getAnalytics } from '../api/orders'
-import { getAllMenu, toggleAvailability, createMenuItem } from '../api/menu'
+import { getAllMenu, toggleAvailability } from '../api/menu'
 import './AdminPage.css'
 
 const SIDEBAR_NAV = [
@@ -35,11 +35,12 @@ export default function AdminPage({ onLogout }) {
       const [oRes, aRes, mRes] = await Promise.all([
         getAllOrders(), getAnalytics(), getAllMenu(),
       ])
-      setOrders(oRes.data   || [])
-      setAnalytics(aRes.data)
-      setMenuItems(mRes.data || [])
+      setOrders(oRes?.data || oRes || [])
+      setAnalytics(aRes?.data || aRes)
+      setMenuItems(mRes?.data || mRes || [])
     } catch (e) {
-      showToast(e.message || 'Failed to load data.', 'error')
+      const errorMsg = e?.message || 'Failed to load data.'
+      showToast(errorMsg, 'error')
     } finally {
       setLoading(false)
     }
@@ -50,14 +51,16 @@ export default function AdminPage({ onLogout }) {
   const handleToggle = useCallback(async (itemId) => {
     try {
       const res = await toggleAvailability(itemId)
-      setMenuItems((prev) => prev.map((m) => m.id === itemId ? res.data : m))
+      const updatedItem = res?.data || res
+      setMenuItems((prev) => prev.map((m) => m.id === itemId ? updatedItem : m))
       const item = menuItems.find((m) => m.id === itemId)
       showToast(
-        item?.isAvailable ? `${item.name} marked unavailable` : `${item.name} is now available`,
+        updatedItem?.isAvailable ? `${item?.name || 'Item'} is now available` : `${item?.name || 'Item'} marked unavailable`,
         'info'
       )
     } catch (e) {
-      showToast(e.message || 'Failed to update.', 'error')
+      const errorMsg = e?.message || 'Failed to update.'
+      showToast(errorMsg, 'error')
     }
   }, [menuItems, showToast])
 

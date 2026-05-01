@@ -7,10 +7,13 @@ export default function LoginPage({ onSuccess, onBack, onRegister }) {
   const showToast = useContext(ToastContext)
 
   const [accessLevel, setAccessLevel] = useState('CUSTOMER')
-  const [email,       setEmail]       = useState('')
+  const [email,       setEmail]       = useState(() => {
+    // Pre-fill email if remember me was checked
+    return localStorage.getItem('df_remember_email') || ''
+  })
   const [password,    setPassword]    = useState('')
   const [showPwd,     setShowPwd]     = useState(false)
-  const [rememberMe,  setRememberMe]  = useState(false)
+  const [rememberMe,  setRememberMe]  = useState(!!localStorage.getItem('df_remember_email'))
   const [loading,     setLoading]     = useState(false)
   const [error,       setError]       = useState('')
 
@@ -26,16 +29,38 @@ export default function LoginPage({ onSuccess, onBack, onRegister }) {
 
   const handleSubmit = async (e) => {
     e?.preventDefault()
-    if (!email || !password) { setError('Email and password are required'); return }
+    // Validate inputs
+    if (!email || !password) {
+      setError('Email and password are required')
+      return
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && !email.match(/^[a-zA-Z0-9._-]+$/)) {
+      setError('Please enter a valid email address')
+      return
+    }
+    
     setError('')
     setLoading(true)
     try {
       const res = await apiLogin(email, password)
-      const { token, role, email: userEmail } = res.data
+      const { token, role, email: userEmail } = res?.data || res
+      if (!token || !role) {
+        setError('Invalid response from server')
+        return
+      }
+      
+      // Handle remember me
+      if (rememberMe) {
+        localStorage.setItem('df_remember_email', email)
+      } else {
+        localStorage.removeItem('df_remember_email')
+      }
+      
       onSuccess({ token, role, email: userEmail })
       showToast(`Logged in as ${role.toLowerCase()} 👋`, 'success')
     } catch (err) {
-      setError(err.message || 'Invalid email or password.')
+      const errorMsg = err?.response?.data?.message || err?.message || 'Invalid email or password.'
+      setError(errorMsg)
     } finally {
       setLoading(false)
     }
