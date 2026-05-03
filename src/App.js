@@ -16,7 +16,10 @@ export const ThemeContext = React.createContext(null)
 const FULL_SCREEN = new Set(['login', 'register'])
 
 export default function App() {
-  const [page,  setPage]  = useState('customer')
+  const [page, setPage] = useState(() => {
+    const token = localStorage.getItem('df_token')
+    return token ? 'customer' : 'login'
+  })
   const [toast, setToast] = useState(null)
 
   // ── Theme ────────────────────────────────────────────────────────────────
@@ -67,7 +70,7 @@ export default function App() {
     localStorage.removeItem('df_role')
     localStorage.removeItem('df_email')
     setAuth(null)
-    setPage('customer')
+    setPage('login')
   }, [])
 
   // ── Navigation ────────────────────────────────────────────────────────────
