@@ -69,7 +69,34 @@ export default function LoginPage({ onSuccess, onBack, onRegister }) {
   return (
     <div className="lp-page">
 
-      {/* ── Left panel (form) ─────────────────────────────── */}
+      {/* ── Left panel (image) ────────────────────────────── */}
+      <div className="lp-right">
+        <div className="lp-right-overlay" />
+        <div className="lp-right-content">
+          <div className="lp-hero-card">
+            <h2 className="lp-hero-headline">
+              Effortless Dining,<br />Modern Service.
+            </h2>
+            <p className="lp-hero-sub">
+              Experience the next generation of hospitality where speed meets
+              sophistication. From kitchen displays to customer self-service,
+              DineFlow powers your culinary journey.
+            </p>
+            <div className="lp-stats">
+              <div className="lp-stat">
+                <span className="lp-stat-value">99%</span>
+                <span className="lp-stat-label">ORDER ACCURACY</span>
+              </div>
+              <div className="lp-stat">
+                <span className="lp-stat-value">2.4k</span>
+                <span className="lp-stat-label">RESTAURANTS CHOICE</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Right panel (form) ─────────────────────────────── */}
       <div className="lp-left">
         <div className="lp-left-inner">
 
@@ -177,33 +204,6 @@ export default function LoginPage({ onSuccess, onBack, onRegister }) {
           </div>
           <span className="lp-footer-copy">© 2024 DineFlow Hospitality. All rights reserved.</span>
         </footer>
-      </div>
-
-      {/* ── Right panel (image) ───────────────────────────── */}
-      <div className="lp-right">
-        <div className="lp-right-overlay" />
-        <div className="lp-right-content">
-          <div className="lp-hero-card">
-            <h2 className="lp-hero-headline">
-              Effortless Dining,<br />Modern Service.
-            </h2>
-            <p className="lp-hero-sub">
-              Experience the next generation of hospitality where speed meets
-              sophistication. From kitchen displays to customer self-service,
-              DineFlow powers your culinary journey.
-            </p>
-            <div className="lp-stats">
-              <div className="lp-stat">
-                <span className="lp-stat-value">99%</span>
-                <span className="lp-stat-label">ORDER ACCURACY</span>
-              </div>
-              <div className="lp-stat">
-                <span className="lp-stat-value">2.4k</span>
-                <span className="lp-stat-label">RESTAURANTS CHOICE</span>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
 
     </div>
