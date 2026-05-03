@@ -80,7 +80,7 @@ export default function LoginPage({ onSuccess, onBack, onRegister }) {
             <p className="lp-hero-sub">
               Experience the next generation of hospitality where speed meets
               sophistication. From kitchen displays to customer self-service,
-              DineFlow powers your culinary journey.
+              Rwanda Easy Ordering powers your culinary journey.
             </p>
             <div className="lp-stats">
               <div className="lp-stat">
@@ -103,7 +103,7 @@ export default function LoginPage({ onSuccess, onBack, onRegister }) {
           {/* Brand */}
           <div className="lp-brand">
             <div className="lp-brand-icon">🍴</div>
-            <h1 className="lp-brand-name">DineFlow</h1>
+            <h1 className="lp-brand-name">Rwanda Easy Ordering</h1>
             <p className="lp-brand-sub">Welcome to Digital Dine-In System</p>
           </div>
 
@@ -134,7 +134,7 @@ export default function LoginPage({ onSuccess, onBack, onRegister }) {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@dineflow.rw"
+                placeholder="name@rwandaeasyordering.rw"
                 className="lp-input"
                 autoComplete="email"
               />
@@ -184,7 +184,7 @@ export default function LoginPage({ onSuccess, onBack, onRegister }) {
 
           {/* Create Account */}
           <div className="lp-create">
-            <p className="lp-create-label">New to DineFlow?</p>
+            <p className="lp-create-label">New to Rwanda Easy Ordering?</p>
             <button
               className="lp-create-btn"
               onClick={onRegister || onBack}
@@ -196,13 +196,13 @@ export default function LoginPage({ onSuccess, onBack, onRegister }) {
 
         {/* Footer */}
         <footer className="lp-footer">
-          <span className="lp-footer-brand">DineFlow</span>
+          <span className="lp-footer-brand">Rwanda Easy Ordering</span>
           <div className="lp-footer-links">
             <button className="lp-footer-link">Privacy Policy</button>
             <button className="lp-footer-link">Terms of Service</button>
             <button className="lp-footer-link">Contact Support</button>
           </div>
-          <span className="lp-footer-copy">© 2024 DineFlow Hospitality. All rights reserved.</span>
+          <span className="lp-footer-copy">© 2024 Rwanda Easy Ordering Hospitality. All rights reserved.</span>
         </footer>
       </div>
 

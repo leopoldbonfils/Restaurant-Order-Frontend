@@ -24,7 +24,7 @@ export default function Sidebar({ currentPage, onNavigate, auth, onLogout, theme
       <div className="sidebar-brand">
         <div className="sidebar-brand-icon">🍴</div>
         <div>
-          <p className="sidebar-brand-name">DineFlow</p>
+          <p className="sidebar-brand-name">Rwanda Easy Ordering</p>
           <p className="sidebar-brand-sub">Order Management</p>
         </div>
       </div>

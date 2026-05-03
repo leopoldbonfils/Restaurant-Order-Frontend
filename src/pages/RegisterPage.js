@@ -87,7 +87,7 @@ export default function RegisterPage({ onSuccess, onBack }) {
         return
       }
       onSuccess({ token, role, email })
-      showToast('Account created! Welcome to DineFlow 🎉', 'success')
+      showToast('Account created! Welcome to Rwanda Easy Ordering 🎉', 'success')
     } catch (err) {
       const errorMsg = err?.response?.data?.message || err?.message || 'Registration failed. Please try again.'
       showToast(errorMsg, 'error')
@@ -107,14 +107,14 @@ export default function RegisterPage({ onSuccess, onBack }) {
         <div className="reg-left-content">
           <div className="reg-left-logo">
             <span className="reg-left-logo-icon">🍴</span>
-            <span className="reg-left-logo-name">DineFlow</span>
+            <span className="reg-left-logo-name">Rwanda Easy Ordering</span>
           </div>
           <div className="reg-left-body">
             <h1 className="reg-left-headline">Join the<br />Table.</h1>
             <p className="reg-left-sub">
               Experience seamless dining,<br />
               personalized rewards, and priority<br />
-              booking at DineFlow.
+              booking at Rwanda Easy Ordering.
             </p>
           </div>
           <div className="reg-left-dots">
@@ -263,7 +263,7 @@ export default function RegisterPage({ onSuccess, onBack }) {
                 <span className="reg-link">Terms &amp; Conditions</span>
                 {' '}and{' '}
                 <span className="reg-link">Privacy Policy</span>
-                {' '}of DineFlow Hospitality.
+                {' '}of Rwanda Easy Ordering Hospitality.
               </span>
             </label>
             {errors.agreed && <p className="reg-error">{errors.agreed}</p>}
