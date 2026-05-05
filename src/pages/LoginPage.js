@@ -6,7 +6,6 @@ import './LoginPage.css'
 export default function LoginPage({ onSuccess, onBack, onRegister }) {
   const showToast = useContext(ToastContext)
 
-  const [accessLevel, setAccessLevel] = useState('CUSTOMER')
   const [email,       setEmail]       = useState(() => {
     // Pre-fill email if remember me was checked
     return localStorage.getItem('df_remember_email') || ''
@@ -16,16 +15,6 @@ export default function LoginPage({ onSuccess, onBack, onRegister }) {
   const [rememberMe,  setRememberMe]  = useState(!!localStorage.getItem('df_remember_email'))
   const [loading,     setLoading]     = useState(false)
   const [error,       setError]       = useState('')
-
-  /* Pre-fill demo credentials when access level changes */
-  const handleAccessChange = (e) => {
-    const role = e.target.value
-    setAccessLevel(role)
-    setError('')
-    if (role === 'KITCHEN') { setEmail('kitchen@demo.rw'); setPassword('kitchen123') }
-    else if (role === 'ADMIN') { setEmail('admin@demo.rw'); setPassword('admin123') }
-    else { setEmail(''); setPassword('') }
-  }
 
   const handleSubmit = async (e) => {
     e?.preventDefault()
@@ -109,23 +98,6 @@ export default function LoginPage({ onSuccess, onBack, onRegister }) {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="lp-form">
-
-            {/* Access Level */}
-            <div className="lp-field">
-              <label className="lp-label">Access Level</label>
-              <div className="lp-select-wrap">
-                <select
-                  value={accessLevel}
-                  onChange={handleAccessChange}
-                  className="lp-select"
-                >
-                  <option value="CUSTOMER">Customer</option>
-                  <option value="KITCHEN">Kitchen Staff</option>
-                  <option value="ADMIN">Admin</option>
-                </select>
-                <span className="lp-select-arrow">▾</span>
-              </div>
-            </div>
 
             {/* Email */}
             <div className="lp-field">

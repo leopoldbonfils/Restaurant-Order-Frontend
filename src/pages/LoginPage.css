@@ -79,41 +79,6 @@
   color: var(--gray-600);
 }
 
-/* Select */
-.lp-select-wrap {
-  position: relative;
-}
-
-.lp-select {
-  width: 100%;
-  appearance: none;
-  -webkit-appearance: none;
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius-sm);
-  padding: 11px 36px 11px 14px;
-  font-size: 13px;
-  color: var(--gray-800);
-  background: var(--white);
-  outline: none;
-  cursor: pointer;
-  transition: border-color 0.15s;
-}
-
-.lp-select:focus {
-  border-color: #c0392b;
-  box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.1);
-}
-
-.lp-select-arrow {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 11px;
-  color: var(--gray-400);
-  pointer-events: none;
-}
-
 /* Inputs */
 .lp-input {
   border: 1px solid var(--gray-200);
