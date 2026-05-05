@@ -27,6 +27,7 @@ export default function RegisterPage({ onSuccess, onBack }) {
     fullName: '',
     email: '',
     phone: '',
+    role: 'CUSTOMER',
     password: '',
     confirmPassword: '',
     diningPreferences: '',
@@ -80,7 +81,7 @@ export default function RegisterPage({ onSuccess, onBack }) {
     setErrors({})
     setLoading(true)
     try {
-      const res = await apiRegister(form.email, form.password, form.fullName, 'CUSTOMER')
+      const res = await apiRegister(form.email, form.password, form.fullName, form.role)
       const { token, role, email } = res?.data || res
       if (!token || !role) {
         showToast('Invalid response from server', 'error')
@@ -176,6 +177,23 @@ export default function RegisterPage({ onSuccess, onBack }) {
                   className="reg-input"
                 />
               </div>
+            </div>
+          </div>
+
+          {/* Access Level */}
+          <div className="reg-field">
+            <label className="reg-label">Access Level</label>
+            <div className="reg-input-wrap">
+              <span className="reg-input-icon">🔑</span>
+              <select
+                value={form.role}
+                onChange={set('role')}
+                className="reg-input"
+              >
+                <option value="CUSTOMER">Customer</option>
+                <option value="KITCHEN">Kitchen Staff</option>
+                <option value="ADMIN">Admin</option>
+              </select>
             </div>
           </div>
 
