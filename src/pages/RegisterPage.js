@@ -6,10 +6,10 @@ import './RegisterPage.css'
 function getPasswordStrength(pwd) {
   if (!pwd) return { score: 0, label: '', color: '' }
   let score = 0
-  if (pwd.length >= 8)              score++
-  if (/[A-Z]/.test(pwd))            score++
-  if (/[0-9]/.test(pwd))            score++
-  if (/[^A-Za-z0-9]/.test(pwd))     score++
+  if (pwd.length >= 8) score++
+  if (/[A-Z]/.test(pwd)) score++
+  if (/[0-9]/.test(pwd)) score++
+  if (/[^A-Za-z0-9]/.test(pwd)) score++
   const levels = [
     { label: '',        color: '' },
     { label: 'Weak',    color: '#ef4444' },
@@ -32,11 +32,11 @@ export default function RegisterPage({ onSuccess, onBack }) {
     confirmPassword: '',
     diningPreferences: '',
   })
-  const [showPwd,     setShowPwd]     = useState(false)
+  const [showPwd, setShowPwd] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
-  const [agreed,      setAgreed]      = useState(false)
-  const [loading,     setLoading]     = useState(false)
-  const [errors,      setErrors]      = useState({})
+  const [agreed, setAgreed] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [errors, setErrors] = useState({})
 
   const set = (key) => (e) => setForm((p) => ({ ...p, [key]: e.target.value }))
 
