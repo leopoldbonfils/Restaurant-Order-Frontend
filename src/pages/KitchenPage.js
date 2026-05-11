@@ -5,18 +5,10 @@ import { getActiveOrders, updateOrderStatus } from '../api/orders'
 import { connectWebSocket, disconnectWebSocket, registerGlobalCallback, unregisterGlobalCallback } from '../api/websocket'
 import './KitchenPage.css'
 
-const NAV = [
-  { key: 'orders',    label: 'Orders',    icon: '◫' },
-  { key: 'inventory', label: 'Inventory', icon: '⊟' },
-  { key: 'history',   label: 'History',   icon: '◷' },
-  { key: 'reports',   label: 'Reports',   icon: '⊞' },
-]
-
 export default function KitchenPage({ onLogout }) {
   const showToast = useContext(ToastContext)
   const [orders,      setOrders]      = useState([])
   const [loading,     setLoading]     = useState(true)
-  const [activeNav,   setActiveNav]   = useState('orders')
   const [activeTab,   setActiveTab]   = useState('orders')
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -26,42 +18,25 @@ export default function KitchenPage({ onLogout }) {
       const res = await getActiveOrders()
       setOrders(res?.data || res || [])
     } catch (err) {
-      const errorMsg = err?.message || 'Failed to load orders.'
-      showToast(errorMsg, 'error')
+      showToast(err?.message || 'Failed to load orders.', 'error')
     } finally {
       setLoading(false)
     }
   }, [showToast])
 
-  /* Initial load */
   useEffect(() => { fetchOrders() }, [fetchOrders])
 
-  /* Poll every 30 s as a safety net */
-  useEffect(() => {
-    const id = setInterval(() => fetchOrders(true), 30000)
-    return () => clearInterval(id)
-  }, [fetchOrders])
-
-  /* WebSocket — listen on /topic/orders for real-time updates */
   useEffect(() => {
     const WS_KEY = 'kitchen-page'
-
     connectWebSocket({
-      onOrderUpdate: (event) => {
-        fetchOrders(true)
-        if (event.newStatus === 'PENDING') {
-          showToast(`🔔 New order from ${event.tableNumber}!`, 'info')
-        }
-      },
+      onOrderUpdate: () => fetchOrders(true),
     })
-
     registerGlobalCallback(WS_KEY, (event) => {
       fetchOrders(true)
       if (event.newStatus === 'PENDING') {
-        showToast(`🔔 New order from ${event.tableNumber}!`, 'info')
+        showToast(`🔔 New order from Table ${event.tableNumber}!`, 'info')
       }
     })
-
     return () => {
       unregisterGlobalCallback(WS_KEY)
       disconnectWebSocket()
@@ -76,9 +51,9 @@ export default function KitchenPage({ onLogout }) {
           ? prev.filter((o) => o.id !== orderId)
           : prev.map((o) => o.id === orderId ? { ...o, status: newStatus } : o)
       )
-      if (newStatus === 'READY') showToast('✅ Order ready — waiter notified!', 'success')
+      if (newStatus === 'READY') showToast('✅ Order ready for delivery!', 'success')
     } catch (e) {
-      showToast(e.message || 'Failed to update.', 'error')
+      showToast(e.message || 'Failed to update status.', 'error')
     }
   }, [showToast])
 
@@ -88,124 +63,61 @@ export default function KitchenPage({ onLogout }) {
     READY:     orders.filter((o) => o.status === 'READY').length,
   }
 
-  const filteredOrders = searchQuery.trim()
-    ? orders.filter((o) =>
-        o.tableNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        o.items?.some((i) => i.menuItemName?.toLowerCase().includes(searchQuery.toLowerCase()))
-      )
-    : orders
+  const filteredOrders = orders.filter((o) =>
+    !searchQuery || 
+    o.tableNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    o.items?.some(i => i.menuItemName?.toLowerCase().includes(searchQuery.toLowerCase()))
+  )
 
   return (
-    <div className="kos-shell">
-
-      {/* ── Left sidebar ─────────────────────────────────────── */}
-      <aside className="kos-sidebar">
-        <div className="kos-sidebar-brand">
-          <div className="kos-brand-icon">🍴</div>
-          <div>
-            <p className="kos-brand-name">Kitchen OS</p>
-          </div>
+    <div className="kitchen-portal fade-in">
+      <header className="portal-header">
+        <div className="header-info">
+          <h1>Kitchen Display System</h1>
+          <p>Real-time order management • Station 1</p>
         </div>
-
-        <div className="kos-station">
-          <div className="kos-station-icon">🖥</div>
-          <div>
-            <p className="kos-station-name">Station 1</p>
-            <p className="kos-station-sub">Main Kitchen</p>
-          </div>
-        </div>
-
-        <nav className="kos-nav">
-          {NAV.map((item) => (
-            <button
-              key={item.key}
-              onClick={() => setActiveNav(item.key)}
-              className={`kos-nav-item ${activeNav === item.key ? 'active' : ''}`}
-            >
-              <span className="kos-nav-icon">{item.icon}</span>
-              <span className="kos-nav-label">{item.label}</span>
-            </button>
-          ))}
-        </nav>
-
-        <div className="kos-sidebar-footer">
-          <button className="kos-footer-btn">
-            <span>⚙</span> Support
-          </button>
-          {/* ── Logout wired to onLogout prop ── */}
-          <button
-            className="kos-footer-btn kos-logout"
-            onClick={onLogout}
-          >
-            <span>↩</span> Logout
-          </button>
-        </div>
-      </aside>
-
-      {/* ── Main area ────────────────────────────────────────── */}
-      <div className="kos-main">
-
-        {/* Top bar */}
-        <header className="kos-topbar">
-          <div className="kos-tabs">
-            {['orders', 'inventory', 'history'].map((t) => (
-              <button
-                key={t}
-                onClick={() => setActiveTab(t)}
-                className={`kos-tab ${activeTab === t ? 'active' : ''}`}
-              >
-                {t.charAt(0).toUpperCase() + t.slice(1)}
-              </button>
-            ))}
-          </div>
-
-          <div className="kos-topbar-right">
-            <div className="kos-search-wrap">
-              <span className="kos-search-icon">🔍</span>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search orders..."
-                className="kos-search"
-              />
-            </div>
-            <button
-              className="kos-icon-btn"
-              onClick={() => fetchOrders(true)}
-              title="Refresh"
-            >
-              🔄
-            </button>
-            <button className="kos-icon-btn">⚙</button>
-            <div className="kos-avatar">DK</div>
-          </div>
-        </header>
-
-        {/* Board */}
-        <div className="kos-board-wrap">
-          {loading && orders.length === 0 ? (
-            <div className="kos-loading">
-              <div className="kos-loading-spinner" />
-              <p>Loading orders…</p>
-            </div>
-          ) : (
-            <KitchenKanban
-              orders={filteredOrders}
-              onAdvance={handleAdvance}
-              counts={counts}
+        
+        <div className="header-actions">
+          <div className="search-box">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input
+              type="text"
+              placeholder="Search orders..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
-          )}
+          </div>
+          <button className="refresh-btn" onClick={() => fetchOrders(true)}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><polyline points="21 3 21 8 16 8"/></svg>
+          </button>
         </div>
+      </header>
 
-        {/* FAB */}
-        <button
-          className="kos-fab"
-          onClick={() => fetchOrders(true)}
-          title="Refresh"
-        >
-          +
-        </button>
+      <div className="kitchen-tabs">
+        {['orders', 'history', 'inventory'].map(tab => (
+          <button
+            key={tab}
+            className={`kitchen-tab ${activeTab === tab ? 'active' : ''}`}
+            onClick={() => setActiveTab(tab)}
+          >
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      <div className="kitchen-content">
+        {loading && orders.length === 0 ? (
+          <div className="loading-state">
+            <div className="spinner"></div>
+            <p>Syncing with server...</p>
+          </div>
+        ) : (
+          <KitchenKanban
+            orders={filteredOrders}
+            onAdvance={handleAdvance}
+            counts={counts}
+          />
+        )}
       </div>
     </div>
   )
