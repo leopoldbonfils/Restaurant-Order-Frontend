@@ -3,305 +3,114 @@ import { ToastContext } from '../App'
 import { register as apiRegister } from '../api/auth'
 import './RegisterPage.css'
 
-function getPasswordStrength(pwd) {
-  if (!pwd) return { score: 0, label: '', color: '' }
-  let score = 0
-  if (pwd.length >= 8) score++
-  if (/[A-Z]/.test(pwd)) score++
-  if (/[0-9]/.test(pwd)) score++
-  if (/[^A-Za-z0-9]/.test(pwd)) score++
-  const levels = [
-    { label: '',        color: '' },
-    { label: 'Weak',    color: '#ef4444' },
-    { label: 'Fair',    color: '#f97316' },
-    { label: 'Medium',  color: '#eab308' },
-    { label: 'Strong',  color: '#22c55e' },
-  ]
-  return { score, ...levels[score] }
-}
-
 export default function RegisterPage({ onSuccess, onBack }) {
   const showToast = useContext(ToastContext)
 
-  const [form, setForm] = useState({
-    fullName: '',
+  const [formData, setFormData] = useState({
     email: '',
-    phone: '',
-    role: 'CUSTOMER',
     password: '',
-    confirmPassword: '',
-    diningPreferences: '',
+    fullName: '',
+    role: 'CUSTOMER'
   })
-  const [showPwd, setShowPwd] = useState(false)
-  const [showConfirm, setShowConfirm] = useState(false)
-  const [agreed, setAgreed] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [errors, setErrors] = useState({})
+  const [error, setError] = useState('')
 
-  const set = (key) => (e) => setForm((p) => ({ ...p, [key]: e.target.value }))
-
-  const validate = () => {
-    const errors = {}
-    
-    if (!form.fullName.trim()) {
-      errors.fullName = 'Full name is required'
-    }
-    
-    if (!form.email.trim()) {
-      errors.email = 'Email is required'
-    } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(form.email)) {
-      errors.email = 'Please enter a valid email address'
-    }
-    
-    if (!form.password) {
-      errors.password = 'Password is required'
-    } else if (form.password.length < 6) {
-      errors.password = 'Password must be at least 6 characters'
-    }
-    
-    if (!form.confirmPassword) {
-      errors.confirmPassword = 'Please confirm your password'
-    } else if (form.password !== form.confirmPassword) {
-      errors.confirmPassword = 'Passwords do not match'
-    }
-    
-    if (!agreed) {
-      errors.agreed = 'You must agree to the terms and conditions'
-    }
-    
-    return errors
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = async () => {
-    const validationErrors = validate()
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors)
-      return
-    }
-    setErrors({})
+  const handleSubmit = async (e) => {
+    e?.preventDefault()
+    setError('')
     setLoading(true)
+
     try {
-      const res = await apiRegister(form.email, form.password, form.fullName, form.role)
-      const { token, role, email } = res?.data || res
-      if (!token || !role) {
-        showToast('Invalid response from server', 'error')
-        return
-      }
-      onSuccess({ token, role, email })
-      showToast('Account created! Welcome to Rwanda Easy Ordering 🎉', 'success')
+      const res = await apiRegister(formData)
+      const data = res?.data || res
+      onSuccess(data)
+      showToast(`Welcome to BistroFlow, ${data.fullName}!`, 'success')
     } catch (err) {
-      const errorMsg = err?.response?.data?.message || err?.message || 'Registration failed. Please try again.'
-      showToast(errorMsg, 'error')
-      setErrors({ submit: errorMsg })
+      setError(err?.message || 'Registration failed. Please try again.')
     } finally {
       setLoading(false)
     }
   }
 
-  const strength = getPasswordStrength(form.password)
-
   return (
-    <div className="reg-page">
-      {/* ── Left panel ─────────────────────────────────────── */}
-      <div className="reg-left">
-        <div className="reg-left-overlay" />
-        <div className="reg-left-content">
-          <div className="reg-left-logo">
-            <span className="reg-left-logo-icon">🍴</span>
-            <span className="reg-left-logo-name">Rwanda Easy Ordering</span>
+    <div className="register-container">
+      <div className="register-card fade-in">
+        <div className="register-header">
+          <button className="back-btn" onClick={onBack}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          </button>
+          <h1>Create Account</h1>
+          <p>Join the future of restaurant management</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="register-form">
+          <div className="input-group">
+            <label>Full Name</label>
+            <input
+              type="text"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleChange}
+              placeholder="John Doe"
+              required
+            />
           </div>
-          <div className="reg-left-body">
-            <h1 className="reg-left-headline">Join the<br />Table.</h1>
-            <p className="reg-left-sub">
-              Experience seamless dining,<br />
-              personalized rewards, and priority<br />
-              booking at Rwanda Easy Ordering.
-            </p>
+
+          <div className="input-group">
+            <label>Email Address</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="name@company.com"
+              required
+            />
           </div>
-          <div className="reg-left-dots">
-            <span className="reg-dot active" />
-            <span className="reg-dot" />
-            <span className="reg-dot" />
+
+          <div className="input-group">
+            <label>Password</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Min. 8 characters"
+              required
+              minLength="8"
+            />
           </div>
+
+          <div className="input-group">
+            <label>Account Type</label>
+            <select name="role" value={formData.role} onChange={handleChange}>
+              <option value="CUSTOMER">Customer / Diner</option>
+              <option value="KITCHEN">Kitchen Staff</option>
+              <option value="ADMIN">Restaurant Manager</option>
+            </select>
+          </div>
+
+          {error && <div className="error-alert">{error}</div>}
+
+          <button type="submit" disabled={loading} className="register-submit-btn">
+            {loading ? <span className="spinner"></span> : 'Create Account'}
+          </button>
+        </form>
+
+        <div className="register-footer">
+          <p>Already have an account?</p>
+          <button className="login-link" onClick={onBack}>Sign In</button>
         </div>
       </div>
 
-      {/* ── Right panel ────────────────────────────────────── */}
-      <div className="reg-right">
-        <div className="reg-form-wrap">
-          <h2 className="reg-title">Create Account</h2>
-          <p className="reg-sub">Start your culinary journey with us today.</p>
-
-          {/* Full Name */}
-          <div className="reg-field">
-            <label className="reg-label">Full Name</label>
-            <div className={`reg-input-wrap ${errors.fullName ? 'error' : ''}`}>
-              <span className="reg-input-icon">👤</span>
-              <input
-                type="text"
-                placeholder="John Doe"
-                value={form.fullName}
-                onChange={set('fullName')}
-                className="reg-input"
-              />
-            </div>
-            {errors.fullName && <p className="reg-error">{errors.fullName}</p>}
-          </div>
-
-          {/* Email + Phone */}
-          <div className="reg-row">
-            <div className="reg-field">
-              <label className="reg-label">Email Address</label>
-              <div className={`reg-input-wrap ${errors.email ? 'error' : ''}`}>
-                <span className="reg-input-icon">✉️</span>
-                <input
-                  type="email"
-                  placeholder="john@example.com"
-                  value={form.email}
-                  onChange={set('email')}
-                  className="reg-input"
-                />
-              </div>
-              {errors.email && <p className="reg-error">{errors.email}</p>}
-            </div>
-
-            <div className="reg-field">
-              <label className="reg-label">Phone Number</label>
-              <div className="reg-input-wrap">
-                <span className="reg-input-icon">📞</span>
-                <input
-                  type="tel"
-                  placeholder="+1 (555) 000-0000"
-                  value={form.phone}
-                  onChange={set('phone')}
-                  className="reg-input"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Access Level */}
-          <div className="reg-field">
-            <label className="reg-label">Access Level</label>
-            <div className="reg-input-wrap">
-              <span className="reg-input-icon">🔑</span>
-              <select
-                value={form.role}
-                onChange={set('role')}
-                className="reg-input"
-              >
-                <option value="CUSTOMER">Customer</option>
-                <option value="KITCHEN">Kitchen Staff</option>
-                <option value="ADMIN">Admin</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Password */}
-          <div className="reg-field">
-            <label className="reg-label">Password</label>
-            <div className={`reg-input-wrap ${errors.password ? 'error' : ''}`}>
-              <span className="reg-input-icon">🔒</span>
-              <input
-                type={showPwd ? 'text' : 'password'}
-                placeholder="••••••••"
-                value={form.password}
-                onChange={set('password')}
-                className="reg-input"
-              />
-              <button className="reg-eye-btn" onClick={() => setShowPwd((v) => !v)}>
-                {showPwd ? '🙈' : '👁'}
-              </button>
-            </div>
-            {form.password && (
-              <div className="reg-strength">
-                <div className="reg-strength-bar">
-                  {[1, 2, 3, 4].map((s) => (
-                    <div
-                      key={s}
-                      className="reg-strength-seg"
-                      style={{ background: s <= strength.score ? strength.color : '#e5e7eb' }}
-                    />
-                  ))}
-                </div>
-                <span className="reg-strength-label" style={{ color: strength.color }}>
-                  Strength: {strength.label}
-                </span>
-              </div>
-            )}
-            {errors.password && <p className="reg-error">{errors.password}</p>}
-          </div>
-
-          {/* Confirm Password */}
-          <div className="reg-field">
-            <label className="reg-label">Confirm Password</label>
-            <div className={`reg-input-wrap ${errors.confirmPassword ? 'error' : ''}`}>
-              <span className="reg-input-icon">🔒</span>
-              <input
-                type={showConfirm ? 'text' : 'password'}
-                placeholder="••••••••"
-                value={form.confirmPassword}
-                onChange={set('confirmPassword')}
-                className="reg-input"
-              />
-              <button className="reg-eye-btn" onClick={() => setShowConfirm((v) => !v)}>
-                {showConfirm ? '🙈' : '👁'}
-              </button>
-            </div>
-            {errors.confirmPassword && <p className="reg-error">{errors.confirmPassword}</p>}
-          </div>
-
-          {/* Dining Preferences */}
-          <div className="reg-field">
-            <label className="reg-label">Dining Preferences <span className="reg-optional">(Optional)</span></label>
-            <div className="reg-input-wrap reg-textarea-wrap">
-              <span className="reg-input-icon" style={{ alignSelf: 'flex-start', marginTop: 10 }}>🍽</span>
-              <textarea
-                placeholder="Window seat, quiet corner, dietary restrictions…"
-                value={form.diningPreferences}
-                onChange={set('diningPreferences')}
-                className="reg-input reg-textarea"
-                rows={2}
-              />
-            </div>
-          </div>
-
-          {/* Terms */}
-          <div className="reg-terms">
-            <label className={`reg-checkbox-wrap ${errors.agreed ? 'error' : ''}`}>
-              <input
-                type="checkbox"
-                checked={agreed}
-                onChange={(e) => setAgreed(e.target.checked)}
-                className="reg-checkbox"
-              />
-              <span className="reg-checkbox-custom" />
-              <span className="reg-terms-text">
-                I agree to the{' '}
-                <span className="reg-link">Terms &amp; Conditions</span>
-                {' '}and{' '}
-                <span className="reg-link">Privacy Policy</span>
-                {' '}of Rwanda Easy Ordering Hospitality.
-              </span>
-            </label>
-            {errors.agreed && <p className="reg-error">{errors.agreed}</p>}
-          </div>
-
-          {/* Submit */}
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            className="reg-submit-btn"
-          >
-            {loading ? 'CREATING ACCOUNT…' : 'REGISTER'}
-          </button>
-
-          {/* Login link */}
-          <p className="reg-login-link">
-            Already have an account?{' '}
-            <button className="reg-link reg-link-btn" onClick={onBack}>Login</button>
-          </p>
-        </div>
+      <div className="register-bg">
+        <div className="bg-blob blob-1"></div>
+        <div className="bg-blob blob-2"></div>
       </div>
     </div>
   )
