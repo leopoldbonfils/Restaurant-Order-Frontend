@@ -6,10 +6,33 @@
 .main-content {
   flex: 1;
   min-width: 0;
-  margin-left: 240px;
+  transition: padding-left 0.3s ease;
+}
+
+.main-content.with-sidebar {
+  padding-left: 280px;
 }
 
 .main-full {
   flex: 1;
   min-width: 0;
+}
+
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 1024px) {
+  .main-content.with-sidebar {
+    padding-left: 80px;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content.with-sidebar {
+    padding-left: 0;
+    padding-top: 60px; /* Space for mobile header if added later */
+  }
 }
