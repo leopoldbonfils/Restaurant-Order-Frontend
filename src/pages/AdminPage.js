@@ -10,17 +10,9 @@ import { getAllOrders, getAnalytics } from '../api/orders'
 import { getAllMenu, toggleAvailability } from '../api/menu'
 import './AdminPage.css'
 
-const SIDEBAR_NAV = [
-  { key: 'dashboard', label: 'Dashboard',       icon: '⊞' },
-  { key: 'orders',    label: 'Orders',           icon: '◫' },
-  { key: 'menu',      label: 'Menu Management',  icon: '☰' },
-  { key: 'analytics', label: 'Analytics',        icon: '◷' },
-  { key: 'staff',     label: 'Staff',            icon: '👤' },
-]
-
 export default function AdminPage({ onLogout }) {
   const showToast   = useContext(ToastContext)
-  const [activePage, setActivePage] = useState('dashboard')
+  const [activeTab, setActiveTab] = useState('dashboard')
   const [chartRange, setChartRange] = useState('month')
   const [catFilter,  setCatFilter]  = useState('All Categories')
   const [search,     setSearch]     = useState('')
@@ -39,8 +31,7 @@ export default function AdminPage({ onLogout }) {
       setAnalytics(aRes?.data || aRes)
       setMenuItems(mRes?.data || mRes || [])
     } catch (e) {
-      const errorMsg = e?.message || 'Failed to load data.'
-      showToast(errorMsg, 'error')
+      showToast(e?.message || 'Failed to sync data.', 'error')
     } finally {
       setLoading(false)
     }
@@ -53,125 +44,84 @@ export default function AdminPage({ onLogout }) {
       const res = await toggleAvailability(itemId)
       const updatedItem = res?.data || res
       setMenuItems((prev) => prev.map((m) => m.id === itemId ? updatedItem : m))
-      const item = menuItems.find((m) => m.id === itemId)
-      showToast(
-        updatedItem?.isAvailable ? `${item?.name || 'Item'} is now available` : `${item?.name || 'Item'} marked unavailable`,
-        'info'
-      )
+      showToast(`${updatedItem?.name} status updated.`, 'info')
     } catch (e) {
-      const errorMsg = e?.message || 'Failed to update.'
-      showToast(errorMsg, 'error')
+      showToast(e?.message || 'Update failed.', 'error')
     }
-  }, [menuItems, showToast])
+  }, [showToast])
 
-  /* Derived */
   const categories   = ['All Categories', ...new Set(menuItems.map((m) => m.category))]
   const filteredMenu = menuItems.filter((m) => {
     const matchCat = catFilter === 'All Categories' || m.category === catFilter
-    const matchQ   = !search.trim() ||
-      m.name.toLowerCase().includes(search.toLowerCase())
+    const matchQ   = !search.trim() || m.name.toLowerCase().includes(search.toLowerCase())
     return matchCat && matchQ
   })
 
-  const activeTables  = orders.filter((o) => !['PAID','CANCELLED'].includes(o.status))
-  const staffOnDuty   = 12   // static demo value
-
   return (
-    <div className="ba-shell">
-
-      {/* ── Sidebar ──────────────────────────────────────────── */}
-      <aside className="ba-sidebar">
-        <div className="ba-sidebar-brand">
-          <div className="ba-brand-icon">🍴</div>
-          <div>
-            <p className="ba-brand-name">Bistro Admin</p>
-            <p className="ba-brand-sub">Premium Management</p>
-          </div>
+    <div className="admin-portal fade-in">
+      <header className="portal-header">
+        <div className="header-info">
+          <h1>Management Console</h1>
+          <p>Business Analytics & Restaurant Control</p>
         </div>
-
-        <nav className="ba-nav">
-          {SIDEBAR_NAV.map((item) => (
-            <button
-              key={item.key}
-              onClick={() => setActivePage(item.key)}
-              className={`ba-nav-item ${activePage === item.key ? 'active' : ''}`}
-            >
-              <span className="ba-nav-icon">{item.icon}</span>
-              <span className="ba-nav-label">{item.label}</span>
-            </button>
-          ))}
-        </nav>
-
-        <div className="ba-sidebar-footer">
-          <button className="ba-footer-btn">
-            <span>⚙</span> Settings
-          </button>
-          <button className="ba-footer-btn ba-logout" onClick={onLogout}>
-            <span>↩</span> Logout
-          </button>
-        </div>
-      </aside>
-
-      {/* ── Main area ─────────────────────────────────────────── */}
-      <div className="ba-main">
-
-        {/* Top bar */}
-        <header className="ba-topbar">
-          <div className="ba-search-wrap">
-            <span className="ba-search-icon">🔍</span>
+        
+        <div className="header-actions">
+          <div className="search-box">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             <input
               type="text"
+              placeholder="Global search..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search orders, dishes, or staff..."
-              className="ba-search"
             />
           </div>
+          <button className="create-btn" onClick={() => showToast('Order creation coming soon!', 'info')}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>New Item</span>
+          </button>
+        </div>
+      </header>
 
-          <div className="ba-topbar-right">
-            <button className="ba-icon-btn">🔔</button>
-            <button className="ba-icon-btn">❓</button>
-            <button className="ba-create-btn" onClick={() => showToast('Create order coming soon!', 'info')}>
-              + Create Order
-            </button>
-            <div className="ba-avatar-wrap">
-              <div className="ba-avatar">👨‍🍳</div>
-              <div className="ba-avatar-info">
-                <p className="ba-avatar-name">Chef Julian</p>
-                <p className="ba-avatar-role">Administrator</p>
-              </div>
-            </div>
+      <div className="admin-tabs">
+        {['dashboard', 'orders', 'menu', 'analytics', 'staff'].map(tab => (
+          <button
+            key={tab}
+            className={`admin-tab ${activeTab === tab ? 'active' : ''}`}
+            onClick={() => setActiveTab(tab)}
+          >
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      <div className="admin-content">
+        {loading ? (
+          <div className="loading-state">
+            <div className="spinner"></div>
+            <p>Gathering analytics...</p>
           </div>
-        </header>
-
-        {/* Page content */}
-        <div className="ba-content">
-          {loading ? (
-            <div className="ba-loading">
-              <div className="ba-spinner" />
-              <p>Loading dashboard…</p>
-            </div>
-          ) : (
-            <>
-              {/* Metric cards */}
-              <AdminMetricCards
-                analytics={analytics}
-                orders={orders}
-                activeTables={activeTables.length}
-                staffOnDuty={staffOnDuty}
-              />
-
-              {/* Middle row: chart + popular dishes */}
-              <div className="ba-mid-row">
-                <SalesAnalyticsChart
+        ) : (
+          <div className="dashboard-grid">
+            {activeTab === 'dashboard' && (
+              <>
+                <AdminMetricCards
+                  analytics={analytics}
                   orders={orders}
-                  range={chartRange}
-                  onRangeChange={setChartRange}
+                  activeTables={orders.filter(o => !['PAID','CANCELLED'].includes(o.status)).length}
+                  staffOnDuty={12}
                 />
-                <PopularDishes items={analytics?.topSellingItems} menuItems={menuItems} />
-              </div>
-
-              {/* Menu management */}
+                <div className="dashboard-charts">
+                  <SalesAnalyticsChart
+                    orders={orders}
+                    range={chartRange}
+                    onRangeChange={setChartRange}
+                  />
+                  <PopularDishes items={analytics?.topSellingItems} menuItems={menuItems} />
+                </div>
+              </>
+            )}
+            
+            {activeTab === 'menu' && (
               <AdminMenuTable
                 menuItems={filteredMenu}
                 allMenuItems={menuItems}
@@ -181,9 +131,16 @@ export default function AdminPage({ onLogout }) {
                 onToggle={handleToggle}
                 onRefresh={() => fetchData(true)}
               />
-            </>
-          )}
-        </div>
+            )}
+            
+            {(activeTab === 'orders' || activeTab === 'analytics' || activeTab === 'staff') && (
+              <div className="placeholder-view">
+                <h3>{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Module</h3>
+                <p>This section is currently being updated for the new design system.</p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )
