@@ -1,44 +1,39 @@
 /* ── View layout ─────────────────────────────────────────────────────────── */
 .brw-view {
   display: flex;
-  gap: 20px;
-  height: 100%;
-  overflow: hidden;
-  padding: 20px;
+  gap: 1.5rem;
 }
 
 .brw-main {
   flex: 1;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1.25rem;
   min-width: 0;
 }
-
-.brw-main::-webkit-scrollbar { width: 3px; }
-.brw-main::-webkit-scrollbar-thumb { background: #ddd8d0; border-radius: 2px; }
 
 /* ── Welcome ─────────────────────────────────────────────────────────────── */
 .brw-welcome { margin-bottom: 4px; }
 
 .brw-welcome-title {
-  font-size: 26px;
+  font-size: 1.75rem;
   font-weight: 800;
-  color: #e05a2b;
-  letter-spacing: -0.5px;
+  color: var(--brand-primary);
+  letter-spacing: -0.03em;
   margin-bottom: 4px;
+  font-family: 'Outfit', sans-serif;
 }
 
 .brw-welcome-sub {
-  font-size: 13px;
-  color: #94a3b8;
+  font-size: 0.875rem;
+  color: var(--gray-400);
 }
 
 /* ── Membership card ─────────────────────────────────────────────────────── */
 .brw-membership-card {
-  border-radius: 16px;
-  padding: 24px 28px;
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+  border-radius: var(--radius-lg);
+  padding: 2rem;
   position: relative;
   overflow: hidden;
   min-height: 160px;
@@ -48,71 +43,74 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-bottom: 12px;
+  margin-bottom: 0.875rem;
 }
 
 .brw-tier-label {
-  font-size: 10px;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   opacity: 0.7;
+  color: white;
 }
 
 .brw-tier-name {
-  font-size: 12px;
+  font-size: 0.8rem;
   font-weight: 800;
-  letter-spacing: 1px;
+  letter-spacing: 0.05em;
+  color: white;
 }
 
 .brw-pts-row {
   display: flex;
   align-items: baseline;
   gap: 4px;
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
 .brw-pts-value {
-  font-size: 40px;
+  font-size: 2.75rem;
   font-weight: 900;
   color: white;
-  letter-spacing: -1px;
+  letter-spacing: -0.05em;
   line-height: 1;
+  font-family: 'Outfit', sans-serif;
 }
 
 .brw-pts-label {
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 600;
-  color: rgba(255,255,255,0.7);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .brw-progress-bar {
   height: 6px;
-  background: rgba(255,255,255,0.2);
+  background: rgba(255, 255, 255, 0.2);
   border-radius: 3px;
   overflow: hidden;
-  margin-bottom: 8px;
+  margin-bottom: 0.5rem;
 }
 
 .brw-progress-fill {
   height: 100%;
-  background: rgba(255,255,255,0.8);
+  background: rgba(255, 255, 255, 0.8);
   border-radius: 3px;
   transition: width 0.5s ease;
 }
 
 .brw-progress-label {
-  font-size: 12px;
-  color: rgba(255,255,255,0.7);
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.7);
   line-height: 1.4;
 }
 
 .brw-trophy-watermark {
   position: absolute;
-  right: 24px;
+  right: 1.5rem;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 80px;
+  font-size: 5rem;
   opacity: 0.15;
   pointer-events: none;
 }
@@ -122,128 +120,119 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 14px;
+  margin-bottom: 1rem;
 }
 
 .brw-section-title {
-  font-size: 15px;
+  font-size: 1rem;
   font-weight: 700;
-  color: #1f2937;
+  color: var(--gray-900);
 }
 
 .brw-view-all {
-  font-size: 12px;
-  color: #e05a2b;
+  font-size: 0.8rem;
+  color: var(--brand-primary);
   font-weight: 600;
-  background: none;
-  border: none;
-  cursor: pointer;
 }
+
+.brw-view-all:hover { text-decoration: underline; }
 
 /* ── Orders section ──────────────────────────────────────────────────────── */
 .brw-orders-section,
 .brw-dietary-section {
-  background: white;
-  border: 1px solid #f0ede8;
-  border-radius: 16px;
-  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
 }
 
 .brw-orders-empty {
-  font-size: 13px;
-  color: #94a3b8;
+  font-size: 0.875rem;
+  color: var(--gray-400);
   text-align: center;
-  padding: 20px 0;
-}
-
-.brw-orders-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+  padding: 1.5rem 0;
 }
 
 .brw-order-row {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 0;
-  border-bottom: 1px solid #f8f7f4;
+  gap: 0.875rem;
+  padding: 0.875rem 0;
+  border-bottom: 1px solid var(--gray-100);
 }
 
 .brw-order-row:last-child { border-bottom: none; }
 
 .brw-order-emoji-wrap {
   width: 44px; height: 44px;
-  background: #f8f7f4;
-  border-radius: 10px;
+  background: var(--gray-100);
+  border-radius: var(--radius);
   display: flex; align-items: center; justify-content: center;
-  font-size: 22px;
+  font-size: 1.25rem;
   flex-shrink: 0;
 }
 
 .brw-order-info { flex: 1; min-width: 0; }
-.brw-order-name { font-size: 13px; font-weight: 600; color: #1f2937; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.brw-order-meta { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+.brw-order-name { font-size: 0.875rem; font-weight: 600; color: var(--gray-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.brw-order-meta { font-size: 0.75rem; color: var(--gray-400); margin-top: 2px; }
 
 .brw-order-status {
   display: inline-block;
-  font-size: 9px;
+  font-size: 0.65rem;
   font-weight: 700;
-  padding: 2px 7px;
-  border-radius: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
   margin-top: 3px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.05em;
 }
 
-.brw-order-status.paid      { background: #dcfce7; color: #16a34a; }
-.brw-order-status.cancelled { background: #fee2e2; color: #dc2626; }
+.brw-order-status.paid      { background: rgba(16, 185, 129, 0.1); color: var(--green); }
+.brw-order-status.cancelled { background: rgba(239, 68, 68, 0.1);  color: var(--red); }
 
 .brw-reorder-btn {
-  font-size: 11px;
+  font-size: 0.8rem;
   font-weight: 700;
-  color: #e05a2b;
-  background: #fde8df;
-  border: none;
-  border-radius: 7px;
-  padding: 7px 12px;
-  cursor: pointer;
+  color: var(--brand-primary);
+  background: rgba(99, 102, 241, 0.1);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.875rem;
   flex-shrink: 0;
-  transition: background 0.15s;
+  transition: all 0.15s;
 }
 
-.brw-reorder-btn:hover { background: #f9cbb7; }
+.brw-reorder-btn:hover { background: rgba(99, 102, 241, 0.2); }
 
 /* ── Dietary ─────────────────────────────────────────────────────────────── */
 .brw-dietary-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .brw-dietary-tag {
-  padding: 6px 14px;
-  border-radius: 999px;
-  font-size: 12px;
+  padding: 0.375rem 0.875rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
   font-weight: 600;
-  border: 1.5px solid #e5e7eb;
-  background: white;
-  color: #64748b;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--gray-500);
   cursor: pointer;
   transition: all 0.15s;
 }
 
-.brw-dietary-tag:hover { border-color: #e05a2b; color: #e05a2b; }
+.brw-dietary-tag:hover { border-color: var(--brand-primary); color: var(--brand-primary); }
 
 .brw-dietary-tag.active {
-  background: #fde8df;
-  border-color: #e05a2b;
-  color: #e05a2b;
+  background: rgba(99, 102, 241, 0.1);
+  border-color: var(--brand-primary);
+  color: var(--brand-primary);
 }
 
 .brw-dietary-tag.add {
   border-style: dashed;
-  color: #94a3b8;
+  color: var(--gray-400);
 }
 
 /* ── Sidebar ─────────────────────────────────────────────────────────────── */
@@ -252,50 +241,49 @@
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  overflow-y: auto;
+  gap: 1rem;
   align-self: flex-start;
+  position: sticky;
+  top: 2rem;
 }
-
-.brw-sidebar::-webkit-scrollbar { display: none; }
 
 /* ── Seat card ───────────────────────────────────────────────────────────── */
 .brw-seat-card {
-  background: white;
-  border: 1px solid #f0ede8;
-  border-radius: 16px;
-  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
 }
 
 .brw-seat-label {
-  font-size: 10px;
+  font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: #94a3b8;
+  letter-spacing: 0.08em;
+  color: var(--gray-400);
   margin-bottom: 4px;
 }
 
 .brw-seat-info {
-  font-size: 13px;
+  font-size: 0.875rem;
   font-weight: 700;
-  color: #1f2937;
-  margin-bottom: 12px;
+  color: var(--gray-900);
+  margin-bottom: 0.875rem;
 }
 
 .brw-seat-img {
-  border-radius: 10px;
+  border-radius: var(--radius);
   overflow: hidden;
-  margin-bottom: 12px;
+  margin-bottom: 0.875rem;
 }
 
 .brw-seat-img-inner {
   height: 110px;
-  background: linear-gradient(135deg, #1a0f08, #2d1508);
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-accent));
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 48px;
+  font-size: 3rem;
   position: relative;
 }
 
@@ -303,35 +291,30 @@
   position: absolute;
   bottom: 8px;
   left: 12px;
-  font-size: 10px;
+  font-size: 0.7rem;
   font-weight: 600;
-  color: rgba(255,255,255,0.7);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .brw-seat-btn {
   width: 100%;
-  background: none;
-  border: 1.5px solid #e5e7eb;
-  border-radius: 8px;
-  padding: 9px;
-  font-size: 11px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.625rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  color: #374151;
-  cursor: pointer;
-  margin-bottom: 8px;
+  color: var(--gray-700);
+  margin-bottom: 0.5rem;
   transition: all 0.15s;
 }
 
-.brw-seat-btn:hover { border-color: #e05a2b; color: #e05a2b; }
+.brw-seat-btn:hover { border-color: var(--brand-primary); color: var(--brand-primary); }
 
 .brw-quick-reserve {
   width: 100%;
-  background: none;
-  border: none;
-  font-size: 11px;
+  font-size: 0.8rem;
   font-weight: 600;
-  color: #e05a2b;
-  cursor: pointer;
+  color: var(--brand-primary);
   padding: 4px 0;
   text-align: left;
 }
@@ -340,70 +323,61 @@
 
 /* ── Payment card ────────────────────────────────────────────────────────── */
 .brw-payment-card {
-  background: white;
-  border: 1px solid #f0ede8;
-  border-radius: 16px;
-  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
 }
 
 .brw-payment-title {
-  font-size: 13px;
+  font-size: 0.875rem;
   font-weight: 700;
-  color: #1f2937;
-  margin-bottom: 14px;
+  color: var(--gray-900);
+  margin-bottom: 1rem;
 }
 
 .brw-payment-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 14px;
+  gap: 0.875rem;
+  margin-bottom: 1rem;
 }
 
 .brw-payment-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.75rem;
 }
 
-.brw-payment-icon {
-  font-size: 20px;
-  flex-shrink: 0;
-}
+.brw-payment-icon { font-size: 1.25rem; flex-shrink: 0; }
 
-.brw-payment-name {
-  font-size: 12px;
-  font-weight: 600;
-  color: #1f2937;
-}
-
-.brw-payment-type {
-  font-size: 10px;
-  color: #94a3b8;
-  margin-top: 1px;
-}
+.brw-payment-name { font-size: 0.8rem; font-weight: 600; color: var(--gray-900); }
+.brw-payment-type { font-size: 0.7rem; color: var(--gray-400); margin-top: 1px; }
 
 .brw-payment-default {
   margin-left: auto;
-  font-size: 9px;
+  font-size: 0.65rem;
   font-weight: 700;
-  background: #dcfce7;
-  color: #16a34a;
-  padding: 2px 7px;
-  border-radius: 4px;
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--green);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
 }
 
 .brw-manage-btn {
   width: 100%;
-  background: none;
-  border: 1.5px dashed #e5e7eb;
-  border-radius: 8px;
-  padding: 9px;
-  font-size: 11px;
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 0.625rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  color: #94a3b8;
-  cursor: pointer;
+  color: var(--gray-400);
   transition: all 0.15s;
 }
 
-.brw-manage-btn:hover { border-color: #e05a2b; color: #e05a2b; }
+.brw-manage-btn:hover { border-color: var(--brand-primary); color: var(--brand-primary); }
+
+@media (max-width: 900px) {
+  .brw-view { flex-direction: column; }
+  .brw-sidebar { width: 100%; position: static; }
+}
