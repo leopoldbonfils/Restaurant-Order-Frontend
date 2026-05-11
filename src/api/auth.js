@@ -6,8 +6,8 @@ export const login = (email, password) =>
     body: JSON.stringify({ email, password }),
   })
 
-export const register = (email, password, fullName, role) =>
+export const register = (data) =>
   apiFetch('/auth/register', {
     method: 'POST',
-    body: JSON.stringify({ email, password, fullName, role }),
+    body: JSON.stringify(data),
   })
