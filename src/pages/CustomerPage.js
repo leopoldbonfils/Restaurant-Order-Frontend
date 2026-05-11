@@ -11,17 +11,22 @@ import BistroRewards    from '../components/customer/RewardsView'
 import CheckInForm      from '../components/customer/CheckInForm'
 import './CustomerPage.css'
 
-const NAV = [
-  { key: 'menu',    label: 'Menu',    icon: '☰' },
-  { key: 'offers',  label: 'Offers',  icon: '🏷' },
-  { key: 'orders',  label: 'Orders',  icon: '◫' },
-  { key: 'rewards', label: 'Rewards', icon: '⭐' },
+const NAV_TABS = [
+  { key: 'menu',    label: 'Browse Menu', icon: (
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+  )},
+  { key: 'orders',  label: 'My Orders',   icon: (
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+  )},
+  { key: 'rewards', label: 'Rewards',    icon: (
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+  )},
 ]
 
 export default function CustomerPage() {
   const showToast = useContext(ToastContext)
 
-  const [activeNav,       setActiveNav]       = useState('menu')
+  const [activeTab,       setActiveTab]       = useState('menu')
   const [tableNumber,     setTableNumber]     = useState('')
   const [customerId,      setCustomerId]      = useState(null)
   const [loyaltyPts,      setLoyaltyPts]      = useState(0)
@@ -46,31 +51,16 @@ export default function CustomerPage() {
         )
         if (event.newStatus === 'READY') {
           showToast('🎉 Your order is ready!', 'success')
-          setActiveNav('orders')
+          setActiveTab('orders')
         }
-        if (event.newStatus === 'DELIVERED') showToast('🚚 Enjoy your meal!', 'info')
       },
     })
     return () => disconnectWebSocket()
-  }, [tableNumber, showToast])
+  }, [tableNumber, showToast, setMyOrders])
 
   useEffect(() => {
     if (customerId) fetchMyOrders(customerId)
   }, [customerId, fetchMyOrders])
-
-  // Show menu errors
-  useEffect(() => {
-    if (menuError) {
-      showToast(`Menu error: ${menuError}`, 'error')
-    }
-  }, [menuError, showToast])
-
-  // Show order errors
-  useEffect(() => {
-    if (orderError) {
-      showToast(`Order error: ${orderError}`, 'error')
-    }
-  }, [orderError, showToast])
 
   const handleCheckIn = useCallback(async (table, language) => {
     try {
@@ -79,10 +69,9 @@ export default function CustomerPage() {
       setTableNumber(table)
       setCustomerId(id)
       setLoyaltyPts(loyaltyPoints || 0)
-      showToast(`Welcome! Checked in to ${table} 🎉`, 'success')
+      showToast(`Welcome! You are at table ${table}.`, 'success')
     } catch (err) {
-      const errorMsg = err?.message || 'Check-in failed. Please try again.'
-      showToast(errorMsg, 'error')
+      showToast(err?.message || 'Check-in failed.', 'error')
     }
   }, [showToast])
 
@@ -93,8 +82,8 @@ export default function CustomerPage() {
       clearCart()
       setCartOpen(false)
       setSpecialRequests('')
-      setActiveNav('orders')
-      showToast(`Order #${order.id} placed! Est. ${order.estimatedPrepMinutes} min ⏱`, 'success')
+      setActiveTab('orders')
+      showToast(`Order #${order.id} placed successfully!`, 'success')
     } catch (e) {
       showToast(e.message || 'Failed to place order.', 'error')
     }
@@ -102,142 +91,86 @@ export default function CustomerPage() {
 
   const pastOrders = myOrders.filter((o) => ['PAID', 'CANCELLED'].includes(o.status))
 
-  /* ── Render ───────────────────────────────────────────────────────── */
   return (
-    <div className="bs-shell">
-
-      {/* ── Sidebar ──────────────────────────────────────────────── */}
-      <aside className="bs-sidebar">
-        <div className="bs-sidebar-brand">
-          <span className="bs-brand-icon">🍴</span>
-          <div>
-            <p className="bs-brand-name">BistroFlow</p>
-          </div>
+    <div className="customer-portal fade-in">
+      {/* Sub-header with Check-in / Table Info */}
+      <div className="portal-header">
+        <div className="header-info">
+          <h1>Experience Dining</h1>
+          <p>{tableNumber ? `Table ${tableNumber} • Premium Service` : 'Welcome to BistroFlow'}</p>
         </div>
-
-        {/* Guest info */}
-        <div className="bs-guest-card">
-          <div className="bs-guest-avatar">
-            {customerId ? '😊' : '👤'}
-          </div>
-          <div>
-            <p className="bs-guest-name">
-              {customerId ? 'Guest' : 'Bistro Luxe'}
-            </p>
-            <p className="bs-guest-sub">
-              {tableNumber ? `${tableNumber}` : 'Premium Dining'}
-            </p>
-          </div>
-        </div>
-
-        {/* Nav */}
-        <nav className="bs-nav">
-          {NAV.map((item) => (
-            <button
-              key={item.key}
-              onClick={() => setActiveNav(item.key)}
-              className={`bs-nav-item ${activeNav === item.key ? 'active' : ''}`}
-            >
-              <span className="bs-nav-icon">{item.icon}</span>
-              <span className="bs-nav-label">{item.label}</span>
-              {item.key === 'orders' && activeOrder && (
-                <span className="bs-nav-dot" />
-              )}
-            </button>
-          ))}
-        </nav>
-
-        {/* Reserve CTA */}
-        {!customerId ? (
-          <div className="bs-sidebar-cta">
+        
+        <div className="header-actions">
+          {!customerId ? (
             <CheckInForm onCheckIn={handleCheckIn} compact />
-          </div>
-        ) : (
-          <div className="bs-sidebar-cta">
-            <button className="bs-reserve-btn">Reserve a Table</button>
-          </div>
-        )}
-      </aside>
-
-      {/* ── Main content ─────────────────────────────────────────── */}
-      <div className="bs-main">
-
-        {/* Top bar */}
-        <header className="bs-topbar">
-          <div className="bs-topbar-nav">
-            <span className="bs-topbar-brand">BistroStream</span>
-            <button className={`bs-topbar-link ${activeNav === 'menu' ? 'active' : ''}`} onClick={() => setActiveNav('menu')}>Menu</button>
-            <button className={`bs-topbar-link ${activeNav === 'offers' ? 'active' : ''}`} onClick={() => setActiveNav('offers')}>Offers</button>
-            <button className={`bs-topbar-link ${activeNav === 'orders' ? 'active' : ''}`} onClick={() => setActiveNav('orders')}>Orders</button>
-          </div>
-          <div className="bs-topbar-search">
-            <span className="bs-topbar-search-icon">🔍</span>
-            <input type="text" placeholder="Search menu..." className="bs-topbar-input" />
-          </div>
-          <div className="bs-topbar-right">
-            <button className="bs-topbar-icon-btn">🔔</button>
-            <button
-              className="bs-topbar-icon-btn bs-cart-btn"
-              onClick={() => setCartOpen((v) => !v)}
-            >
-              🛒
-              {cartCount > 0 && <span className="bs-cart-count">{cartCount}</span>}
-            </button>
-            <div className="bs-topbar-avatar">
-              {customerId ? '😊' : 'G'}
-            </div>
-          </div>
-        </header>
-
-        {/* Page views */}
-        <div className="bs-content">
-          {activeNav === 'menu' && (
-            <BistroMenuView
-              menuItems={menuItems}
-              categories={categories}
-              cart={cart}
-              cartTotal={cartTotal}
-              cartCount={cartCount}
-              cartOpen={cartOpen}
-              onAdd={addToCart}
-              onUpdateQty={updateQty}
-              onRemove={removeFromCart}
-              onPlaceOrder={handlePlaceOrder}
-              onCloseCart={() => setCartOpen(false)}
-              specialRequests={specialRequests}
-              onSpecialRequestsChange={setSpecialRequests}
-              tableNumber={tableNumber}
-              customerId={customerId}
-              orderLoading={orderLoading}
-              loading={menuLoading}
-            />
-          )}
-
-          {activeNav === 'offers' && (
-            <div className="bs-placeholder">
-              <p className="bs-placeholder-icon">🏷</p>
-              <p className="bs-placeholder-title">Special Offers</p>
-              <p className="bs-placeholder-sub">Exclusive deals and promotions coming soon</p>
+          ) : (
+            <div className="status-badge">
+              <span className="dot pulse"></span>
+              Live Tracking Active
             </div>
           )}
-
-          {activeNav === 'orders' && (
-            <BistroOrderView
-              orders={myOrders}
-              activeOrder={activeOrder}
-              pastOrders={pastOrders}
-            />
-          )}
-
-          {activeNav === 'rewards' && (
-            <BistroRewards
-              loyaltyPts={loyaltyPts}
-              customerName='Guest'
-              tableNumber={tableNumber}
-              pastOrders={pastOrders}
-            />
-          )}
+          
+          <button className="cart-toggle-btn" onClick={() => setCartOpen(!cartOpen)}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+            {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+          </button>
         </div>
+      </div>
+
+      {/* Navigation Tabs */}
+      <div className="portal-tabs">
+        {NAV_TABS.map(tab => (
+          <button
+            key={tab.key}
+            className={`portal-tab ${activeTab === tab.key ? 'active' : ''}`}
+            onClick={() => setActiveTab(tab.key)}
+          >
+            {tab.icon}
+            <span>{tab.label}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Main Content Area */}
+      <div className="portal-content">
+        {activeTab === 'menu' && (
+          <BistroMenuView
+            menuItems={menuItems}
+            categories={categories}
+            cart={cart}
+            cartTotal={cartTotal}
+            cartCount={cartCount}
+            cartOpen={cartOpen}
+            onAdd={addToCart}
+            onUpdateQty={updateQty}
+            onRemove={removeFromCart}
+            onPlaceOrder={handlePlaceOrder}
+            onCloseCart={() => setCartOpen(false)}
+            specialRequests={specialRequests}
+            onSpecialRequestsChange={setSpecialRequests}
+            tableNumber={tableNumber}
+            customerId={customerId}
+            orderLoading={orderLoading}
+            loading={menuLoading}
+          />
+        )}
+
+        {activeTab === 'orders' && (
+          <BistroOrderView
+            orders={myOrders}
+            activeOrder={activeOrder}
+            pastOrders={pastOrders}
+          />
+        )}
+
+        {activeTab === 'rewards' && (
+          <BistroRewards
+            loyaltyPts={loyaltyPts}
+            customerName='Guest'
+            tableNumber={tableNumber}
+            pastOrders={pastOrders}
+          />
+        )}
       </div>
     </div>
   )
