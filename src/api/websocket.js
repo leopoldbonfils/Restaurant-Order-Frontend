@@ -29,7 +29,10 @@ export function connectWebSocket({ tableNumber, onOrderUpdate }) {
     return
   }
 
-  socket      = new SockJS('/ws')
+  const wsUrl = process.env.NODE_ENV === 'development' 
+    ? 'http://localhost:8080/ws' 
+    : '/ws'
+  socket = new SockJS(wsUrl)
   stompClient = new Client({
     webSocketFactory: () => socket,
     reconnectDelay:   5000,
