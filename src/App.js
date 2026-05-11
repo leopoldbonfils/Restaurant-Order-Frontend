@@ -134,8 +134,10 @@ export default function App() {
                 onToggleTheme={toggleTheme}
               />
             )}
-            <main className={!isFullScreen ? 'main-content' : 'main-full'}>
-              {renderPage()}
+            <main className={!isFullScreen ? 'main-content with-sidebar' : 'main-full'}>
+              <div className="page-container">
+                {renderPage()}
+              </div>
             </main>
           </div>
           {toast && <Toast message={toast.message} type={toast.type} />}
