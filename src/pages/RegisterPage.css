@@ -1,156 +1,479 @@
-.register-container {
+/* ═══════════════════════════════════════════════════════
+   REGISTER PAGE  —  Role Selector + Split-Screen Form
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Root wrapper ───────────────────────────────────────── */
+.rp-root {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  background: var(--gray-50);
   position: relative;
   overflow: hidden;
-  background: var(--gray-50);
 }
 
-.register-card {
-  width: 100%;
-  max-width: 480px;
-  background: var(--surface);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  padding: 2.5rem;
+.rp-root.rp-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
+  justify-content: stretch;
+  min-height: 100vh;
+}
+
+/* ── Decorative orbs (selector view) ───────────────────── */
+.rp-decor { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+
+.rp-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.22;
+  animation: rpOrbFloat 22s ease-in-out infinite alternate;
+}
+
+.rp-orb1 { width: 560px; height: 560px; background: #7c3aed; top: -15%; right: -10%; }
+.rp-orb2 { width: 440px; height: 440px; background: #0891b2; bottom: -15%; left: -10%; animation-delay: -8s; }
+.rp-orb3 { width: 280px; height: 280px; background: #e8600a; top: 35%; left: 30%; animation-delay: -14s; }
+
+@keyframes rpOrbFloat {
+  0%   { transform: translate(0,0) scale(1); }
+  33%  { transform: translate(-30px,40px) scale(1.08); }
+  66%  { transform: translate(20px,-20px) scale(0.94); }
+  100% { transform: translate(0,0) scale(1); }
+}
+
+/* ════════════════════════════════════════════
+   ROLE SELECTOR VIEW
+   ════════════════════════════════════════════ */
+.rp-selector-wrap {
   position: relative;
   z-index: 10;
+  width: 100%;
+  max-width: 580px;
+  padding: 2.5rem;
+  background: var(--surface);
   border: 1px solid var(--border);
-}
-
-.register-header {
-  text-align: center;
-  margin-bottom: 2rem;
-  position: relative;
-}
-
-.back-btn {
-  position: absolute;
-  left: 0;
-  top: 0;
-  color: var(--gray-400);
-}
-
-.back-btn:hover {
-  color: var(--brand-primary);
-  transform: translateX(-2px);
-}
-
-.register-header h1 {
-  font-size: 1.75rem;
-  margin-bottom: 0.5rem;
-}
-
-.register-header p {
-  color: var(--gray-500);
-  font-size: 0.95rem;
-}
-
-.register-form {
+  border-radius: 24px;
+  box-shadow: 0 24px 48px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.05);
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  align-items: center;
 }
 
-.input-group label {
-  display: block;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--gray-700);
+/* ── Brand ──────────────────────────────────────────────── */
+.rp-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 2.5rem;
+}
+
+.rp-brand-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  letter-spacing: -0.02em;
+}
+
+.rp-brand-light .rp-brand-name { color: rgba(255,255,255,0.95); }
+.rp-brand-light .rp-brand-icon { background: rgba(255,255,255,0.2); color: white; }
+
+.rp-brand-icon {
+  width: 44px; height: 44px;
+  background: var(--rc-grad, linear-gradient(135deg,#7c3aed,#a78bfa));
+  color: white;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+  flex-shrink: 0;
+}
+
+.rp-selector-title {
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  text-align: center;
   margin-bottom: 0.4rem;
+  letter-spacing: -0.03em;
 }
 
-.input-group input, .input-group select {
+.rp-selector-sub {
+  color: var(--gray-500);
+  font-size: 0.95rem;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* ── Role Cards ─────────────────────────────────────────── */
+.rp-role-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
   width: 100%;
 }
 
-.error-alert {
-  background: var(--red-light);
-  color: var(--red);
-  padding: 0.75rem 1rem;
-  border-radius: var(--radius);
-  font-size: 0.875rem;
-  font-weight: 500;
-  border: 1px solid rgba(239, 68, 68, 0.1);
-}
-
-.register-submit-btn {
-  background: var(--brand-primary);
-  color: white;
-  padding: 0.875rem;
-  border-radius: var(--radius);
-  font-weight: 600;
-  font-size: 1rem;
-  margin-top: 0.5rem;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
-}
-
-.register-submit-btn:hover {
-  background: var(--brand-secondary);
-  transform: translateY(-1px);
-}
-
-.register-footer {
-  margin-top: 2rem;
-  text-align: center;
+.rp-role-card {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
+  gap: 1rem;
+  padding: 1.1rem 1.3rem;
+  border-radius: 14px;
+  border: 1.5px solid var(--rc-border, rgba(99,102,241,0.2));
+  background: var(--rc-light, rgba(99,102,241,0.05));
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.rp-role-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--rc-grad, linear-gradient(135deg,#6366f1,#8b5cf6));
+  opacity: 0;
+  transition: opacity 0.22s ease;
+}
+
+.rp-role-card:hover {
+  transform: translateX(4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  border-color: var(--rc, #6366f1);
+}
+.rp-role-card:hover::before { opacity: 0.04; }
+
+.rp-rc-icon-wrap {
+  width: 52px; height: 52px;
+  border-radius: 13px;
+  background: var(--rc-grad, linear-gradient(135deg,#6366f1,#8b5cf6));
+  color: white;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  position: relative; z-index: 1;
+}
+
+.rp-rc-body {
+  flex: 1;
+  position: relative; z-index: 1;
+}
+
+.rp-rc-label {
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  font-family: 'Outfit', sans-serif;
+}
+
+.rp-rc-subtitle {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--rc, #6366f1);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.2rem;
+}
+
+.rp-rc-desc {
+  font-size: 0.82rem;
+  color: var(--gray-500);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.rp-rc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.6rem;
+  background: var(--rc-light, rgba(99,102,241,0.1));
+  border: 1px solid var(--rc-border, rgba(99,102,241,0.2));
+  border-radius: 100px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--rc, #6366f1);
+  white-space: nowrap;
+  position: relative; z-index: 1;
+}
+
+.rp-rc-arrow {
+  color: var(--rc, #6366f1);
+  opacity: 0.6;
+  transition: all 0.22s ease;
+  position: relative; z-index: 1;
+}
+.rp-role-card:hover .rp-rc-arrow { opacity: 1; transform: translateX(3px); }
+
+.rp-selector-footer {
+  margin-top: 1.75rem;
   font-size: 0.9rem;
   color: var(--gray-500);
 }
 
-.login-link {
-  color: var(--brand-primary);
+/* ════════════════════════════════════════════
+   SPLIT-SCREEN FORM VIEW
+   ════════════════════════════════════════════ */
+
+/* ── Left Gradient Panel ────────────────────────────────── */
+.rp-panel-left {
+  background: var(--rc-grad, linear-gradient(135deg,#6366f1,#8b5cf6));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.rp-panel-left::after {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 20% 80%, rgba(255,255,255,0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(0,0,0,0.1) 0%, transparent 50%);
+}
+
+.rp-panel-left-content {
+  position: relative; z-index: 1;
+  max-width: 360px; width: 100%;
+}
+
+.rp-panel-hero { margin: 3rem 0 2.5rem; }
+
+.rp-panel-role-icon {
+  width: 72px; height: 72px;
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 18px;
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+  margin-bottom: 1.5rem;
+  backdrop-filter: blur(8px);
+}
+
+.rp-panel-heading {
+  font-size: 2rem;
   font-weight: 700;
+  color: white;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.03em;
 }
 
-.login-link:hover {
-  text-decoration: underline;
+.rp-panel-desc {
+  font-size: 0.97rem;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.6;
 }
 
-.register-bg {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  z-index: 1;
+.rp-panel-perks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
 }
 
-.bg-blob {
-  position: absolute;
-  filter: blur(80px);
-  opacity: 0.3;
-  border-radius: 50%;
-  animation: blobFloat 20s infinite alternate;
+.rp-perk {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.88);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.blob-1 {
-  width: 600px; height: 600px;
-  background: var(--purple);
-  top: -10%; right: -10%;
+/* ── Right Form Panel ───────────────────────────────────── */
+.rp-panel-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2.5rem;
+  background: var(--surface);
+  overflow-y: auto;
 }
 
-.blob-2 {
-  width: 500px; height: 500px;
-  background: var(--teal);
-  bottom: -10%; left: -10%;
-  animation-delay: -5s;
+.rp-form-wrap {
+  width: 100%;
+  max-width: 420px;
 }
 
-@keyframes blobFloat {
-  0% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(50px, -30px) scale(1.1); }
-  100% { transform: translate(-30px, 50px) scale(0.9); }
+/* ── Back Button ────────────────────────────────────────── */
+.rp-back-btn {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  color: var(--gray-500);
+  font-size: 0.875rem; font-weight: 500;
+  margin-bottom: 1.75rem;
+  padding: 0.4rem 0;
+  transition: all 0.2s ease;
+}
+.rp-back-btn:hover { color: var(--rc, #6366f1); transform: translateX(-2px); }
+
+/* ── Role Badge ─────────────────────────────────────────── */
+.rp-role-badge {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.4rem 0.9rem;
+  background: var(--rc-light, rgba(99,102,241,0.1));
+  border: 1px solid var(--rc-border, rgba(99,102,241,0.25));
+  border-radius: 100px;
+  font-size: 0.8rem; font-weight: 600;
+  color: var(--rc, #6366f1);
+  margin-bottom: 1.5rem;
+}
+.rp-role-badge-icon { display: inline-flex; align-items: center; }
+
+/* ── Headings ───────────────────────────────────────────── */
+.rp-form-title {
+  font-size: 2rem; font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--gray-900);
+  margin-bottom: 0.4rem;
+}
+
+.rp-form-sub {
+  font-size: 0.9rem; color: var(--gray-500);
+  margin-bottom: 2rem;
+}
+
+/* ── Form layout ────────────────────────────────────────── */
+.rp-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.rp-field label {
+  display: block;
+  font-size: 0.83rem; font-weight: 600;
+  color: var(--gray-700);
+  margin-bottom: 0.42rem;
+  letter-spacing: 0.01em;
+}
+
+.rp-input-wrap { position: relative; }
+
+.rp-input-icon {
+  position: absolute; left: 1rem; top: 50%;
+  transform: translateY(-50%);
+  color: var(--gray-400);
+  display: flex; align-items: center;
+  pointer-events: none;
+}
+
+.rp-input-wrap input {
+  width: 100%;
+  padding-left: 2.8rem;
+  padding-right: 2.8rem;
+  height: 48px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: var(--gray-50);
+  font-size: 0.93rem;
+  transition: all 0.2s ease;
+}
+
+.rp-input-wrap input:focus {
+  border-color: var(--rc, #6366f1);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.13);
+  background: var(--surface);
+}
+
+.rp-pwd-toggle {
+  position: absolute; right: 0.9rem; top: 50%;
+  transform: translateY(-50%);
+  color: var(--gray-400);
+  display: flex; align-items: center;
+  padding: 0.25rem; border-radius: 6px;
+  transition: all 0.2s ease;
+}
+.rp-pwd-toggle:hover { color: var(--rc, #6366f1); }
+
+/* ── Password strength ──────────────────────────────────── */
+.rp-strength {
+  display: flex; align-items: center; gap: 0.65rem;
+  margin-top: 0.5rem;
+}
+
+.rp-strength-bars {
+  display: flex; gap: 4px; flex: 1;
+}
+
+.rp-strength-bar {
+  height: 4px; flex: 1;
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+.rp-strength-label {
+  font-size: 0.75rem; font-weight: 600;
+  min-width: 36px; text-align: right;
+  transition: color 0.3s ease;
+}
+
+/* ── Field hint ─────────────────────────────────────────── */
+.rp-field-hint {
+  margin-top: 0.4rem;
+  font-size: 0.78rem;
+  color: var(--gray-400);
+  line-height: 1.4;
+}
+
+/* ── Error ──────────────────────────────────────────────── */
+.rp-error {
+  padding: 0.75rem 1rem;
+  background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.2);
+  border-radius: 10px;
+  color: #dc2626;
+  font-size: 0.875rem; font-weight: 500;
+}
+
+/* ── Submit Button ──────────────────────────────────────── */
+.rp-submit-btn {
+  width: 100%; height: 50px;
+  border-radius: 12px;
+  background: var(--rc-grad, linear-gradient(135deg,#6366f1,#8b5cf6));
+  color: white;
+  font-weight: 700; font-size: 0.97rem;
+  letter-spacing: 0.01em;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  transition: all 0.22s ease;
+  display: flex; align-items: center; justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+.rp-submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  filter: brightness(1.06);
+}
+.rp-submit-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+/* ── Footer ─────────────────────────────────────────────── */
+.rp-form-footer {
+  margin-top: 1.5rem; text-align: center;
+  font-size: 0.88rem; color: var(--gray-500);
+}
+
+.rp-link { color: var(--rc, #6366f1); font-weight: 700; }
+.rp-link:hover { text-decoration: underline; }
+
+/* ════════════════════════════════════════════
+   RESPONSIVE
+   ════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .rp-split { grid-template-columns: 1fr; }
+  .rp-panel-left { padding: 2rem; min-height: 220px; }
+  .rp-panel-hero { margin: 1.5rem 0; }
+  .rp-panel-role-icon { width: 56px; height: 56px; border-radius: 14px; }
+  .rp-panel-heading { font-size: 1.5rem; }
 }
 
 @media (max-width: 480px) {
-  .register-card {
-    padding: 1.5rem;
-    box-shadow: none;
-    background: transparent;
-    border: none;
-  }
+  .rp-selector-wrap { padding: 1.5rem; border-radius: 16px; }
+  .rp-panel-right   { padding: 1.5rem; }
+  .rp-form-wrap     { max-width: 100%; }
+  .rp-panel-left    { display: none; }
 }
