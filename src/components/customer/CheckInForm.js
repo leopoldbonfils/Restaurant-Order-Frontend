@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import './CheckInForm.css'
 
-export default function CheckInForm({ onCheckIn }) {
+export default function CheckInForm({ onCheckIn, compact }) {
   const [table,   setTable]   = useState('')
   const [language, setLang]   = useState('en')
   const [loading, setLoading] = useState(false)
@@ -21,7 +21,7 @@ export default function CheckInForm({ onCheckIn }) {
   }
 
   return (
-    <div className="checkin-card">
+    <div className={`checkin-card ${compact ? 'compact' : ''}`}>
       <div className="checkin-header">
         <div className="checkin-icon">📍</div>
         <div>

@@ -61,3 +61,24 @@
   color: var(--red); 
   margin-top: 6px; 
 }
+
+/* Compact Mode (Sidebar) */
+.checkin-card.compact {
+  flex-direction: column;
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+.checkin-card.compact .checkin-row {
+  flex-direction: column;
+  width: 100%;
+  align-items: stretch;
+}
+
+.checkin-card.compact .checkin-input,
+.checkin-card.compact .checkin-select,
+.checkin-card.compact .checkin-btn {
+  width: 100%;
+  box-sizing: border-box;
+}

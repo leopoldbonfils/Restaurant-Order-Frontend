@@ -8,21 +8,6 @@ function fakeRating(id) {
   return Math.min(r, 5.0).toFixed(1)
 }
 
-function fakeReviews(id) {
-  return 40 + (id * 23) % 120
-}
-
-function StarRating({ value }) {
-  const full  = Math.floor(value)
-  return (
-    <div className="star-rating">
-      {[...Array(5)].map((_, i) => (
-        <span key={i} className={`star ${i < full ? 'full' : ''}`}>★</span>
-      ))}
-    </div>
-  )
-}
-
 function CartDrawer({
   cart, cartTotal, cartCount, open, onClose,
   onUpdateQty, onPlaceOrder,
@@ -102,36 +87,48 @@ function CartDrawer({
 
 function MenuCard({ item, inCartQty, onAdd, onUpdateQty }) {
   const rating = fakeRating(item.id)
-  const reviews = fakeReviews(item.id)
+
+  // Mock images to match demo
+  const mockImages = {
+    1: process.env.PUBLIC_URL + '/images/heritage_ribs_1778704978299.png',
+    2: process.env.PUBLIC_URL + '/images/truffle_pizza_1778705144793.png',
+    3: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80',
+    4: 'https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?w=400&q=80',
+    5: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&q=80',
+    6: 'https://images.unsplash.com/photo-1578985545062-69928b1ea610?w=400&q=80'
+  }
+  const bgImg = item.imageUrl || mockImages[(item.id % 6) + 1] || mockImages[1]
+
+  const tags = []
+  if (item.category === 'Starters') tags.push('VEGETARIAN')
+  else if (item.id % 3 === 0) tags.push('GLUTEN FREE')
+  else if (item.id % 5 === 0) tags.push('HEALTHY')
+  else tags.push('SIGNATURE')
+
+  // Convert price to look like the mock ($xx.xx)
+  const displayPrice = `$${(item.price / 100).toFixed(2)}`
 
   return (
     <div className="menu-card fade-in">
-      <div className="card-media">
-        <span className="card-emoji">{item.imageEmoji || '🍽'}</span>
-        <div className="card-price-overlay">
-          {Number(item.price).toLocaleString()} RWF
-        </div>
-        {item.isSpicy && <div className="spicy-tag">🌶 Hot</div>}
+      <div className="card-media" style={{ backgroundImage: `url(${bgImg})` }}>
+        <div className="card-price-overlay">{displayPrice}</div>
       </div>
 
       <div className="card-content">
-        <div className="card-header">
+        <div className="card-header-row">
           <h3 className="item-name">{item.name}</h3>
-          <span className="item-category">{item.category}</span>
-        </div>
-
-        <div className="item-stats">
-          <StarRating value={parseFloat(rating)} />
-          <span className="reviews">({reviews})</span>
-          <span className="prep-time">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            {item.prepTimeMinutes}m
-          </span>
+          <div className="item-rating">
+            <span className="star">★</span> {rating}
+          </div>
         </div>
 
         <p className="item-desc">{item.description}</p>
 
-        <div className="card-footer">
+        <div className="card-footer-action">
+          <div className="item-tags">
+            {tags.map(t => <span key={t} className="tag-pill">{t}</span>)}
+          </div>
+          
           {inCartQty > 0 ? (
             <div className="card-qty-toggle">
               <button onClick={() => onUpdateQty(item.id, -1)}>−</button>
@@ -139,8 +136,9 @@ function MenuCard({ item, inCartQty, onAdd, onUpdateQty }) {
               <button onClick={() => onUpdateQty(item.id, 1)}>+</button>
             </div>
           ) : (
-            <button onClick={() => onAdd(item)} className="add-to-cart-btn">
-              Add to Tray
+            <button onClick={() => onAdd(item)} className="add-to-cart-btn-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+              Add to Cart
             </button>
           )}
         </div>
@@ -174,16 +172,20 @@ export default function BistroMenuView({
     return 0
   })
 
+  // Try to find the banner image, else fallback to unsplash
+  const bannerImage = process.env.PUBLIC_URL + '/images/artisan_banner_1778705821600.png';
+
   return (
     <div className="menu-view">
       {/* Featured Header */}
-      <div className="featured-banner">
+      <div className="featured-banner" style={{ backgroundImage: `url(${bannerImage}), linear-gradient(135deg, var(--gray-900), var(--gray-800))` }}>
+        <div className="banner-overlay"></div>
         <div className="banner-text">
-          <span className="label">Chef's Signature</span>
-          <h2>Artisan Culinary Journey</h2>
-          <p>Hand-picked ingredients met with contemporary techniques.</p>
+          <span className="label">CHEF'S SPECIAL SELECTION</span>
+          <h2>Artisan Flavors</h2>
+          <p>Experience a symphony of tastes crafted with locally sourced ingredients and time-honored techniques.</p>
+          <button className="explore-btn">Explore Story</button>
         </div>
-        <div className="banner-visual">🍱</div>
       </div>
 
       {/* Control Bar */}
@@ -200,7 +202,8 @@ export default function BistroMenuView({
           ))}
         </div>
         <div className="sort-controls">
-          <span className="sort-label">Sort By</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+          <span className="sort-label">Sort by:</span>
           <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
             {SORT_OPTIONS.map((o) => <option key={o}>{o}</option>)}
           </select>

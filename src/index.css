@@ -3,10 +3,12 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  /* Premium Brand Palette */
-  --brand-primary:   #6366f1; /* Indigo */
-  --brand-secondary: #8b5cf6; /* Violet */
-  --brand-accent:    #ec4899; /* Pink */
+  /* Premium Brand Palette - Updated to Rust/Orange Theme */
+  --brand-primary:   #c2410c; /* Rust Orange */
+  --brand-secondary: #9a3412; /* Darker Rust */
+  --brand-accent:    #ea580c; /* Bright Orange */
+  
+  --bg-cream:        #fdfbf7; /* Warm cream background */
   
   --blue:         #3b82f6;
   --blue-light:   rgba(59, 130, 246, 0.1);
