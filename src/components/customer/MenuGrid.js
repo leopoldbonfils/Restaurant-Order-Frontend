@@ -89,15 +89,21 @@ function MenuCard({ item, inCartQty, onAdd, onUpdateQty }) {
   const rating = fakeRating(item.id)
 
   // Mock images to match demo
-  const mockImages = {
-    1: process.env.PUBLIC_URL + '/images/heritage_ribs_1778704978299.png',
-    2: process.env.PUBLIC_URL + '/images/truffle_pizza_1778705144793.png',
-    3: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80',
-    4: 'https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?w=400&q=80',
-    5: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&q=80',
-    6: 'https://images.unsplash.com/photo-1578985545062-69928b1ea610?w=400&q=80'
-  }
-  const bgImg = item.imageUrl || mockImages[(item.id % 6) + 1] || mockImages[1]
+  const mockImages = [
+    process.env.PUBLIC_URL + '/images/heritage_ribs_1778704978299.png',
+    process.env.PUBLIC_URL + '/images/truffle_pizza_1778705144793.png',
+    'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&q=80',
+    'https://images.unsplash.com/photo-1511690656952-34342bb7c2f2?w=400&q=80',
+    'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&q=80',
+    'https://images.unsplash.com/photo-1578985545062-69928b1ea610?w=400&q=80'
+  ]
+  
+  // Use a simple hash of the name to pick a consistent mock image
+  const hash = item.name ? item.name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) : 0;
+  const fallbackImg = mockImages[hash % mockImages.length];
+
+  // Use the backend image if it exists and isn't just whitespace, otherwise use fallback
+  const bgImg = (item.imageUrl && item.imageUrl.trim() !== '') ? item.imageUrl : fallbackImg;
 
   const tags = []
   if (item.category === 'Starters') tags.push('VEGETARIAN')

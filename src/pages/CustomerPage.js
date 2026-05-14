@@ -99,7 +99,7 @@ export default function CustomerPage() {
       {/* Top Navigation Bar */}
       <header className="customer-topbar">
         <div className="topbar-left">
-          <div className="brand-logo">BistroStream</div>
+          <div className="customer-brand-logo">BistroStream</div>
           <nav className="topbar-nav">
             {['menu', 'offers', 'orders'].map(tab => (
               <button 
@@ -113,18 +113,18 @@ export default function CustomerPage() {
           </nav>
         </div>
         <div className="topbar-right">
-          <div className="search-bar">
+          <div className="customer-search-bar">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             <input type="text" placeholder="Search menu..." />
           </div>
-          <button className="icon-btn">
+          <button className="customer-icon-btn">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
           </button>
-          <button className="icon-btn cart-btn" onClick={() => setCartOpen(!cartOpen)}>
+          <button className="customer-icon-btn cart-btn" onClick={() => setCartOpen(!cartOpen)}>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
             {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
           </button>
-          <div className="user-avatar">
+          <div className="customer-user-avatar">
             <img src="https://ui-avatars.com/api/?name=Guest&background=1e293b&color=fff" alt="User" />
           </div>
         </div>
@@ -162,7 +162,7 @@ export default function CustomerPage() {
                 <CheckInForm onCheckIn={handleCheckIn} compact />
               </div>
             ) : (
-              <div className="status-badge">
+              <div className="customer-status-badge">
                 <span className="dot pulse"></span>
                 Table {tableNumber}
               </div>
