@@ -10,6 +10,8 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
+  background-color: transparent;
+  border-radius: 12px;
 }
 
 .kos-col-header {
@@ -18,13 +20,13 @@
   gap: 10px;
   margin-bottom: 1rem;
   padding: 0.75rem 1rem;
-  background: var(--surface);
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
+  background: #11151e; /* Dark column header bg */
+  border-radius: 8px;
+  border: 1px solid #1f2937;
 }
 
 .kos-col-dot {
-  width: 10px; height: 10px;
+  width: 8px; height: 8px;
   border-radius: 50%;
   flex-shrink: 0;
 }
@@ -32,21 +34,21 @@
 .kos-col-title {
   font-size: 0.85rem;
   font-weight: 700;
-  color: var(--gray-700);
+  color: #9ca3af;
   flex: 1;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 .kos-col-badge {
-  min-width: 24px; height: 24px;
+  min-width: 20px; height: 20px;
   padding: 0 6px;
-  border-radius: var(--radius-sm);
-  background: var(--gray-100);
+  border-radius: 4px;
+  background: #1f2937;
   display: flex; align-items: center; justify-content: center;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  color: var(--gray-600);
+  color: #6b7280;
 }
 
 .kos-col-body {
@@ -59,17 +61,17 @@
   padding-bottom: 1.5rem;
 }
 
-.kos-col-body::-webkit-scrollbar { width: 3px; }
+.kos-col-body::-webkit-scrollbar { width: 4px; }
 .kos-col-body::-webkit-scrollbar-track { background: transparent; }
-.kos-col-body::-webkit-scrollbar-thumb { background: var(--gray-200); border-radius: 2px; }
+.kos-col-body::-webkit-scrollbar-thumb { background: #374151; border-radius: 2px; }
 
 .kos-col-empty {
-  border: 2px dashed var(--border);
-  border-radius: var(--radius);
+  border: 2px dashed #1f2937;
+  border-radius: 12px;
   padding: 2.5rem 1.5rem;
   text-align: center;
   font-size: 0.875rem;
-  color: var(--gray-400);
+  color: #4b5563;
   font-weight: 500;
 }
 

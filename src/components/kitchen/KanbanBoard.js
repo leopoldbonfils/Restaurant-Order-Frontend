@@ -6,7 +6,7 @@ const COLUMNS = [
   {
     status: 'PENDING',
     label:  'New Orders',
-    dot:    '#e05a2b',
+    dot:    '#f97316',
     empty:  'No new orders',
   },
   {
@@ -18,7 +18,7 @@ const COLUMNS = [
   {
     status: 'READY',
     label:  'Ready',
-    dot:    '#22c55e',
+    dot:    '#10b981',
     empty:  'Nothing ready yet',
   },
 ]

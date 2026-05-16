@@ -13,7 +13,7 @@ export const AuthContext  = React.createContext(null)
 export const ThemeContext = React.createContext(null)
 
 /* Pages that render full-screen (no sidebar) */
-const FULL_SCREEN = new Set(['login', 'register', 'customer'])
+const FULL_SCREEN = new Set(['login', 'register', 'customer', 'kitchen'])
 
 export default function App() {
   const [page, setPage] = useState(() => {
