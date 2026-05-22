@@ -9,12 +9,21 @@ const STEPS = [
 ]
 
 const STATUS_MSG = {
-  PENDING:   (id) => `Order #${id} has been received — the kitchen will start soon.`,
+  PENDING:   (id)        => `Order #${id} has been received — the kitchen will start soon.`,
   PREPARING: (id, items) => `Chef is preparing your ${items?.[0]?.menuItemName || 'order'}.`,
-  READY:     (id) => `Order #${id} is ready! A waiter is on the way.`,
-  DELIVERED: (id) => `Order #${id} delivered. Enjoy your meal! 🍽`,
-  PAID:      (id) => `Payment confirmed for order #${id}. Thank you!`,
-  CANCELLED: (id) => `Order #${id} was cancelled.`,
+  READY:     (id)        => `Order #${id} is ready! A waiter is on the way.`,
+  DELIVERED: (id)        => `Order #${id} delivered. Enjoy your meal! 🍽`,
+  PAID:      (id)        => `Payment confirmed for order #${id}. Thank you!`,
+  CANCELLED: (id)        => `Order #${id} was cancelled.`,
+}
+
+const STATUS_ICONS = {
+  PENDING:   '🕐',
+  PREPARING: '👨‍🍳',
+  READY:     '✅',
+  DELIVERED: '🛵',
+  PAID:      '💳',
+  CANCELLED: '❌',
 }
 
 function timeAgo(iso) {
@@ -25,49 +34,104 @@ function timeAgo(iso) {
   return `${mins} minutes ago`
 }
 
+/* ── Item Thumbnail ──────────────────────────────────────────────────────── */
+function ItemThumb({ item }) {
+  const [imgError, setImgError] = React.useState(false)
+  const hasImage = item.imageUrl && !imgError
+
+  return (
+    <div className="ot-thumb">
+      {hasImage ? (
+        <img
+          src={item.imageUrl}
+          alt={item.menuItemName}
+          onError={() => setImgError(true)}
+        />
+      ) : (
+        <span className="ot-thumb-fallback">{item.menuItemEmoji || '🍽'}</span>
+      )}
+    </div>
+  )
+}
+
 /* ── Order Summary Panel ─────────────────────────────────────────────────── */
 function OrderSummary({ order }) {
   if (!order) return null
 
   const subtotal = order.totalAmount || 0
+  const deliveryFee = order.deliveryFee || 0
+  const total = subtotal + deliveryFee
 
   return (
-    <div className="bot-summary-panel">
-      <h3 className="bot-summary-title">Order Summary</h3>
+    <div className="ot-summary-panel">
+      <h3 className="ot-summary-title">Order Summary</h3>
 
-      <div className="bot-summary-items">
+      <div className="ot-summary-items">
         {(order.items || []).map((item, i) => (
-          <div key={i} className="bot-summary-row">
-            <div className="bot-summary-emoji-wrap">
-              <span className="bot-summary-emoji">{item.menuItemEmoji || '🍽'}</span>
+          <div key={i} className="ot-summary-row">
+            <ItemThumb item={item} />
+            <div className="ot-summary-info">
+              <p className="ot-summary-name">{item.menuItemName}</p>
+              {item.menuItemDescription && (
+                <p className="ot-summary-sub">{item.menuItemDescription}</p>
+              )}
             </div>
-            <div className="bot-summary-info">
-              <p className="bot-summary-name">{item.menuItemName}</p>
-              <p className="bot-summary-sub">×{item.quantity}</p>
-            </div>
-            <span className="bot-summary-price">
+            <span className="ot-summary-price">
               {Number(item.lineTotal).toLocaleString()} RWF
             </span>
           </div>
         ))}
       </div>
 
-      <div className="bot-summary-totals">
-        <div className="bot-total-row">
+      <div className="ot-summary-totals">
+        <div className="ot-total-row">
           <span>Subtotal</span>
           <span>{Number(subtotal).toLocaleString()} RWF</span>
         </div>
-        <div className="bot-total-row bot-total-grand">
+        {deliveryFee > 0 && (
+          <div className="ot-total-row">
+            <span>Delivery Fee</span>
+            <span>{Number(deliveryFee).toLocaleString()} RWF</span>
+          </div>
+        )}
+        <div className="ot-total-row ot-total-grand">
           <span>Total</span>
-          <span className="bot-grand-val">{Number(subtotal).toLocaleString()} RWF</span>
+          <span className="ot-grand-val">
+            {Number(deliveryFee > 0 ? total : subtotal).toLocaleString()} RWF
+          </span>
         </div>
       </div>
 
-      <div className="bot-support-btns">
-        <p className="bot-support-label">Need to adjust your order?</p>
-        <div className="bot-support-row">
-          <button className="bot-support-btn outline">Contact Support</button>
-          <button className="bot-support-btn filled">Call Waiter</button>
+      <div className="ot-support-box">
+        <p className="ot-support-label">Need to adjust your order?</p>
+        <div className="ot-support-row">
+          <button className="ot-support-btn outline">Contact Support</button>
+          <button className="ot-support-btn filled">Call Waiter</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ── Map Section ─────────────────────────────────────────────────────────── */
+function OrderMap({ order }) {
+  return (
+    <div className="ot-map-wrap">
+      <iframe
+        className="ot-map-iframe"
+        title="Restaurant Location"
+        src="https://www.openstreetmap.org/export/embed.html?bbox=29.9900%2C-2.0200%2C30.1400%2C-1.8700&amp;layer=mapnik"
+        loading="lazy"
+        allowFullScreen
+      />
+      <div className="ot-courier-card">
+        <div className="ot-courier-avatar">👨‍🍳</div>
+        <div className="ot-courier-info">
+          <p className="ot-courier-name">Your waiter</p>
+          <p className="ot-courier-rating">
+            <span className="ot-star">★</span> 4.9
+            <span className="ot-courier-orders"> · On the way</span>
+          </p>
         </div>
       </div>
     </div>
@@ -79,55 +143,68 @@ export default function BistroOrderView({ orders, activeOrder, pastOrders }) {
 
   if (!orders.length && !pastOrders.length) {
     return (
-      <div className="bot-empty">
-        <span className="bot-empty-icon">🍽</span>
-        <h3 className="bot-empty-title">No orders yet</h3>
-        <p className="bot-empty-sub">Your order history will appear here</p>
+      <div className="ot-empty">
+        <div className="ot-empty-icon">🍽</div>
+        <h3 className="ot-empty-title">No orders yet</h3>
+        <p className="ot-empty-sub">Your order history will appear here once you place an order.</p>
       </div>
     )
   }
 
   const trackOrder = activeOrder || orders[0]
-  const currentIdx = STEPS.findIndex((s) => s.key === trackOrder?.status)
+  const currentIdx  = STEPS.findIndex((s) => s.key === trackOrder?.status)
   const isCancelled = trackOrder?.status === 'CANCELLED'
   const isPaid      = trackOrder?.status === 'PAID'
 
   return (
-    <div className="bot-view">
-      <div className="bot-main-col">
+    <div className="ot-view">
+      {/* ── Left column ── */}
+      <div className="ot-main-col">
 
-        {/* ── Active order tracker ── */}
+        {/* Active tracker card */}
         {trackOrder && !isPaid && (
-          <div className="bot-tracker-card">
-            <div className="bot-tracker-header">
-              <h2 className="bot-tracker-title">Track Your Feast</h2>
-              <p className="bot-tracker-sub">
-                Order #{trackOrder.id}
-                {trackOrder.estimatedPrepMinutes && !['READY','DELIVERED','PAID'].includes(trackOrder.status) && (
-                  <> · Expected in {trackOrder.estimatedPrepMinutes} minutes</>
-                )}
-              </p>
+          <div className="ot-tracker-card">
+            {/* Header */}
+            <div className="ot-tracker-header">
+              <div>
+                <h2 className="ot-tracker-title">Track Your Feast</h2>
+                <p className="ot-tracker-sub">
+                  Order #{trackOrder.id}
+                  {trackOrder.estimatedPrepMinutes &&
+                    !['READY', 'DELIVERED', 'PAID'].includes(trackOrder.status) && (
+                      <> · <span className="ot-eta">Expected in {trackOrder.estimatedPrepMinutes} minutes</span></>
+                  )}
+                </p>
+              </div>
             </div>
 
-            {/* Step progress */}
+            {/* Progress steps */}
             {!isCancelled && (
-              <div className="bot-steps">
+              <div className="ot-steps">
                 {STEPS.map((step, idx) => {
                   const done   = idx < currentIdx
                   const active = idx === currentIdx
                   const last   = idx === STEPS.length - 1
                   return (
                     <React.Fragment key={step.key}>
-                      <div className="bot-step">
-                        <div className={`bot-step-circle ${done ? 'done' : active ? 'active' : 'pending'}`}>
-                          {done ? '✓' : idx + 1}
+                      <div className="ot-step">
+                        <div className={`ot-step-circle ${done ? 'done' : active ? 'active' : 'pending'}`}>
+                          {done ? (
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                          ) : active ? (
+                            <div className="ot-step-pulse" />
+                          ) : (
+                            <span>{idx + 1}</span>
+                          )}
                         </div>
-                        <p className={`bot-step-label ${active ? 'active' : done ? 'done' : ''}`}>
+                        <p className={`ot-step-label ${active ? 'active' : done ? 'done' : ''}`}>
                           {step.label}
                         </p>
                       </div>
                       {!last && (
-                        <div className={`bot-step-line ${done ? 'done' : active ? 'active-line' : ''}`} />
+                        <div className={`ot-step-line ${done ? 'done' : active ? 'half' : ''}`} />
                       )}
                     </React.Fragment>
                   )
@@ -135,59 +212,69 @@ export default function BistroOrderView({ orders, activeOrder, pastOrders }) {
               </div>
             )}
 
-            {/* Status message */}
-            {trackOrder.status && (
-              <div className="bot-status-msg">
-                <span className="bot-status-dot" />
-                <p className="bot-status-text">
-                  {(STATUS_MSG[trackOrder.status] || (() => ''))(trackOrder.id, trackOrder.items)}
-                  {' '}
-                  <span className="bot-status-time">Started {timeAgo(trackOrder.updatedAt || trackOrder.createdAt)}</span>
-                </p>
+            {/* Cancelled badge */}
+            {isCancelled && (
+              <div className="ot-cancelled-badge">
+                ❌ This order was cancelled
               </div>
             )}
 
-            {/* Map placeholder */}
-            <div className="bot-map-placeholder">
-              <div className="bot-map-bg">
-                <div className="bot-map-label">📍 {trackOrder.tableNumber}</div>
-                <div className="bot-map-grid">
-                  {[...Array(16)].map((_, i) => (
-                    <div key={i} className="bot-map-cell" />
-                  ))}
-                </div>
-                <div className="bot-courier-card">
-                  <span className="bot-courier-avatar">👨‍🍳</span>
-                  <div>
-                    <p className="bot-courier-name">Your waiter</p>
-                    <p className="bot-courier-sub">On the way</p>
-                  </div>
+            {/* Status message */}
+            {trackOrder.status && !isCancelled && (
+              <div className="ot-status-msg">
+                <span className="ot-status-icon">
+                  {STATUS_ICONS[trackOrder.status] || '🍽'}
+                </span>
+                <div>
+                  <p className="ot-status-text">
+                    {(STATUS_MSG[trackOrder.status] || (() => ''))(trackOrder.id, trackOrder.items)}
+                  </p>
+                  <p className="ot-status-time">
+                    Started {timeAgo(trackOrder.updatedAt || trackOrder.createdAt)}
+                  </p>
                 </div>
               </div>
-            </div>
+            )}
+
+            {/* Map */}
+            {!isCancelled && <OrderMap order={trackOrder} />}
           </div>
         )}
 
-        {/* ── Past orders ── */}
+        {/* Paid order summary card */}
+        {isPaid && (
+          <div className="ot-tracker-card ot-paid-card">
+            <div className="ot-paid-icon">🎉</div>
+            <h2 className="ot-tracker-title">Thank You!</h2>
+            <p className="ot-tracker-sub">
+              {STATUS_MSG.PAID(trackOrder.id)}
+            </p>
+          </div>
+        )}
+
+        {/* Past orders */}
         {pastOrders.length > 0 && (
-          <div className="bot-past-section">
-            <h3 className="bot-past-title">Recent Orders</h3>
-            <div className="bot-past-list">
+          <div className="ot-past-section">
+            <h3 className="ot-past-title">Recent Orders</h3>
+            <div className="ot-past-list">
               {pastOrders.slice(0, 5).map((order) => (
-                <div key={order.id} className="bot-past-row">
-                  <div className="bot-past-info">
-                    <p className="bot-past-id">Order #{order.id}</p>
-                    <p className="bot-past-meta">
+                <div key={order.id} className="ot-past-row">
+                  <div className="ot-past-icon">
+                    {order.status === 'PAID' ? '✅' : '❌'}
+                  </div>
+                  <div className="ot-past-info">
+                    <p className="ot-past-id">Order #{order.id}</p>
+                    <p className="ot-past-meta">
                       {order.items?.slice(0, 2).map((i) => i.menuItemName).join(', ')}
                       {order.items?.length > 2 && ` +${order.items.length - 2} more`}
                     </p>
-                    <p className="bot-past-date">{timeAgo(order.createdAt)}</p>
+                    <p className="ot-past-date">{timeAgo(order.createdAt)}</p>
                   </div>
-                  <div className="bot-past-right">
-                    <span className={`bot-past-status ${order.status === 'PAID' ? 'paid' : 'cancelled'}`}>
+                  <div className="ot-past-right">
+                    <span className={`ot-past-badge ${order.status === 'PAID' ? 'paid' : 'cancelled'}`}>
                       {order.status}
                     </span>
-                    <p className="bot-past-amount">{Number(order.totalAmount).toLocaleString()} RWF</p>
+                    <p className="ot-past-amount">{Number(order.totalAmount).toLocaleString()} RWF</p>
                   </div>
                 </div>
               ))}
@@ -196,7 +283,7 @@ export default function BistroOrderView({ orders, activeOrder, pastOrders }) {
         )}
       </div>
 
-      {/* ── Summary sidebar ── */}
+      {/* ── Right summary panel ── */}
       <OrderSummary order={trackOrder} />
     </div>
   )

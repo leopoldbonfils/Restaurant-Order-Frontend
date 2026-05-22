@@ -1,10 +1,15 @@
-/* ── View ────────────────────────────────────────────────────────────────── */
-.bot-view {
+/* ═══════════════════════════════════════════════════════════════
+   OrderTracker – BistroStream "Track Your Feast" design
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Layout ─────────────────────────────────────────────────────────────── */
+.ot-view {
   display: flex;
   gap: 1.5rem;
+  align-items: flex-start;
 }
 
-.bot-main-col {
+.ot-main-col {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -12,55 +17,63 @@
   min-width: 0;
 }
 
-/* ── Empty ───────────────────────────────────────────────────────────────── */
-.bot-empty {
-  padding: 4rem;
+/* ── Empty state ─────────────────────────────────────────────────────────── */
+.ot-empty {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.75rem;
+  padding: 5rem 2rem;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   text-align: center;
 }
 
-.bot-empty-icon  { font-size: 3rem; }
-.bot-empty-title { font-size: 1.125rem; font-weight: 700; color: var(--gray-700); }
-.bot-empty-sub   { font-size: 0.875rem; color: var(--gray-400); }
+.ot-empty-icon  { font-size: 3.5rem; line-height: 1; }
+.ot-empty-title { font-size: 1.2rem; font-weight: 700; color: var(--gray-800); margin-top: 0.25rem; }
+.ot-empty-sub   { font-size: 0.875rem; color: var(--gray-400); max-width: 260px; }
 
-/* ── Tracker card ────────────────────────────────────────────────────────── */
-.bot-tracker-card {
+/* ── Tracker card ─────────────────────────────────────────────────────────── */
+.ot-tracker-card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 1.5rem;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
-.bot-tracker-header { margin-bottom: 1.5rem; }
+/* Header */
+.ot-tracker-header { display: flex; justify-content: space-between; align-items: flex-start; }
 
-.bot-tracker-title {
-  font-size: 1.375rem;
+.ot-tracker-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
   font-weight: 800;
   color: var(--gray-900);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   margin-bottom: 4px;
-  font-family: 'Outfit', sans-serif;
 }
 
-.bot-tracker-sub {
+.ot-tracker-sub {
   font-size: 0.875rem;
   color: var(--gray-400);
 }
 
-/* ── Steps ───────────────────────────────────────────────────────────────── */
-.bot-steps {
-  display: flex;
-  align-items: center;
-  margin-bottom: 1.25rem;
+.ot-eta {
+  color: var(--brand-primary);
+  font-weight: 600;
 }
 
-.bot-step {
+/* ── Progress steps ──────────────────────────────────────────────────────── */
+.ot-steps {
+  display: flex;
+  align-items: center;
+}
+
+.ot-step {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -68,132 +81,272 @@
   flex-shrink: 0;
 }
 
-.bot-step-circle {
-  width: 32px; height: 32px;
+.ot-step-circle {
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 0.75rem;
   font-weight: 700;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
+  position: relative;
 }
 
-.bot-step-circle.done    { background: var(--brand-primary); color: white; }
-.bot-step-circle.active  { background: var(--brand-primary); color: white; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2); }
-.bot-step-circle.pending { background: var(--gray-100); color: var(--gray-400); }
+.ot-step-circle.done {
+  background: var(--brand-primary);
+  color: white;
+  box-shadow: 0 2px 8px rgba(194, 65, 12, 0.35);
+}
 
-.bot-step-label {
+.ot-step-circle.active {
+  background: var(--brand-primary);
+  color: white;
+  box-shadow: 0 0 0 5px rgba(194, 65, 12, 0.18);
+}
+
+.ot-step-circle.pending {
+  background: var(--gray-100);
+  color: var(--gray-400);
+  border: 2px solid var(--gray-200);
+}
+
+/* Pulsing inner dot for active step */
+.ot-step-pulse {
+  width: 10px;
+  height: 10px;
+  background: white;
+  border-radius: 50%;
+  animation: ot-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes ot-pulse {
+  0%, 100% { transform: scale(1);   opacity: 1; }
+  50%       { transform: scale(1.4); opacity: 0.7; }
+}
+
+.ot-step-label {
   font-size: 0.7rem;
   color: var(--gray-400);
   font-weight: 500;
   white-space: nowrap;
 }
 
-.bot-step-label.done   { color: var(--brand-primary); }
-.bot-step-label.active { color: var(--gray-900); font-weight: 700; }
+.ot-step-label.done   { color: var(--brand-primary); }
+.ot-step-label.active { color: var(--gray-900); font-weight: 700; }
 
-.bot-step-line {
+/* Step connector line */
+.ot-step-line {
   flex: 1;
   height: 2px;
   background: var(--gray-200);
   margin: 0 4px;
-  margin-bottom: 1.25rem;
-  transition: background 0.3s;
+  margin-bottom: 1.5rem;
+  transition: background 0.4s ease;
+  border-radius: 2px;
 }
 
-.bot-step-line.done        { background: var(--brand-primary); }
-.bot-step-line.active-line { background: linear-gradient(to right, var(--brand-primary) 50%, var(--gray-200) 50%); }
+.ot-step-line.done { background: var(--brand-primary); }
+.ot-step-line.half {
+  background: linear-gradient(to right, var(--brand-primary) 50%, var(--gray-200) 50%);
+}
+
+/* ── Cancelled badge ─────────────────────────────────────────────────────── */
+.ot-cancelled-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--red-light);
+  color: var(--red);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
 
 /* ── Status message ──────────────────────────────────────────────────────── */
-.bot-status-msg {
+.ot-status-msg {
   display: flex;
   align-items: flex-start;
   gap: 0.875rem;
-  background: rgba(99, 102, 241, 0.05);
-  border: 1px solid rgba(99, 102, 241, 0.15);
+  background: rgba(234, 88, 12, 0.06);
+  border: 1px solid rgba(234, 88, 12, 0.18);
   border-radius: var(--radius);
-  padding: 1rem;
-  margin-bottom: 1rem;
+  padding: 1rem 1.25rem;
 }
 
-.bot-status-dot {
-  width: 10px; height: 10px;
-  background: var(--brand-primary);
-  border-radius: 50%;
+.ot-status-icon {
+  font-size: 1.25rem;
   flex-shrink: 0;
-  margin-top: 3px;
-  animation: bot-blink 1.5s infinite;
+  margin-top: 1px;
 }
 
-@keyframes bot-blink {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.3; }
-}
-
-.bot-status-text {
-  font-size: 0.875rem;
+.ot-status-text {
+  font-size: 0.9rem;
+  font-weight: 500;
   color: var(--gray-700);
   line-height: 1.5;
 }
 
-.bot-status-time {
-  font-size: 0.75rem;
+.ot-status-time {
+  display: block;
+  font-size: 0.78rem;
   color: var(--gray-400);
+  margin-top: 3px;
   font-style: italic;
 }
 
-/* ── Past orders section ─────────────────────────────────────────────────── */
-.bot-past-section {
+/* ── Map ─────────────────────────────────────────────────────────────────── */
+.ot-map-wrap {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+  height: 220px;
+  border: 1px solid var(--border);
+}
+
+.ot-map-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+/* Courier card overlay */
+.ot-courier-card {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background: white;
+  border-radius: var(--radius);
+  padding: 0.6rem 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+  z-index: 2;
+}
+
+.ot-courier-avatar {
+  font-size: 1.5rem;
+  width: 38px;
+  height: 38px;
+  background: var(--gray-100);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ot-courier-info { min-width: 0; }
+
+.ot-courier-name {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 1px;
+}
+
+.ot-courier-rating {
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.ot-star {
+  color: #f59e0b;
+  margin-right: 2px;
+}
+
+.ot-courier-orders { color: #94a3b8; }
+
+/* ── Paid card ───────────────────────────────────────────────────────────── */
+.ot-paid-card {
+  text-align: center;
+  padding: 3rem 2rem;
+  align-items: center;
+}
+
+.ot-paid-icon { font-size: 3rem; }
+
+/* ── Past orders ─────────────────────────────────────────────────────────── */
+.ot-past-section {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 1.5rem;
 }
 
-.bot-past-title {
+.ot-past-title {
   font-size: 1rem;
   font-weight: 700;
   color: var(--gray-900);
   margin-bottom: 1rem;
 }
 
-.bot-past-row {
+.ot-past-list {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 0;
+}
+
+.ot-past-row {
+  display: flex;
   align-items: center;
+  gap: 0.875rem;
   padding: 0.875rem 0;
   border-bottom: 1px solid var(--gray-100);
 }
 
-.bot-past-row:last-child { border-bottom: none; }
+.ot-past-row:last-child { border-bottom: none; }
 
-.bot-past-id   { font-size: 0.875rem; font-weight: 600; color: var(--gray-900); }
-.bot-past-meta { font-size: 0.75rem; color: var(--gray-400); margin-top: 2px; }
-.bot-past-date { font-size: 0.7rem; color: var(--gray-300); margin-top: 2px; }
-.bot-past-right { text-align: right; }
+.ot-past-icon {
+  font-size: 1.1rem;
+  width: 36px;
+  height: 36px;
+  background: var(--gray-50);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
 
-.bot-past-status {
-  font-size: 0.7rem;
+.ot-past-info { flex: 1; min-width: 0; }
+
+.ot-past-id   { font-size: 0.875rem; font-weight: 600; color: var(--gray-900); }
+.ot-past-meta { font-size: 0.75rem;  color: var(--gray-400); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ot-past-date { font-size: 0.7rem;   color: var(--gray-300); margin-top: 2px; }
+
+.ot-past-right { text-align: right; flex-shrink: 0; }
+
+.ot-past-badge {
+  font-size: 0.68rem;
   font-weight: 700;
   padding: 3px 8px;
   border-radius: var(--radius-full);
   display: inline-block;
-  margin-bottom: 4px;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
 }
 
-.bot-past-status.paid      { background: rgba(16, 185, 129, 0.1); color: var(--green); }
-.bot-past-status.cancelled { background: rgba(239, 68, 68, 0.1);  color: var(--red); }
+.ot-past-badge.paid      { background: rgba(16, 185, 129, 0.1); color: var(--green); }
+.ot-past-badge.cancelled { background: rgba(239, 68, 68, 0.1);  color: var(--red); }
 
-.bot-past-amount {
+.ot-past-amount {
   font-size: 0.8rem;
   font-weight: 700;
   color: var(--brand-primary);
 }
 
-/* ── Summary sidebar ─────────────────────────────────────────────────────── */
-.bot-summary-panel {
-  width: 280px;
+/* ═══════════════════════════════════════════════════════════════
+   Order Summary Panel (right column)
+   ═══════════════════════════════════════════════════════════════ */
+.ot-summary-panel {
+  width: 290px;
   flex-shrink: 0;
   background: var(--surface);
   border: 1px solid var(--border);
@@ -203,104 +356,171 @@
   flex-direction: column;
   gap: 0;
   align-self: flex-start;
-  max-height: 85vh;
-  overflow-y: auto;
   position: sticky;
-  top: 2rem;
+  top: 1.5rem;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
-.bot-summary-title {
-  font-size: 1rem;
+.ot-summary-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.05rem;
   font-weight: 700;
   color: var(--gray-900);
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
-.bot-summary-items {
+/* Item rows */
+.ot-summary-items {
   display: flex;
   flex-direction: column;
-  gap: 0.875rem;
-  margin-bottom: 1rem;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
 }
 
-.bot-summary-row {
+.ot-summary-row {
   display: flex;
   align-items: center;
   gap: 0.75rem;
 }
 
-.bot-summary-emoji-wrap {
-  width: 42px; height: 42px;
+/* Item thumbnail */
+.ot-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
   background: var(--gray-100);
-  border-radius: var(--radius);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.25rem;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.bot-summary-info  { flex: 1; min-width: 0; }
-.bot-summary-name  { font-size: 0.875rem; font-weight: 600; color: var(--gray-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.bot-summary-sub   { font-size: 0.75rem; color: var(--gray-400); margin-top: 1px; }
-.bot-summary-price { font-size: 0.875rem; font-weight: 700; color: var(--gray-900); white-space: nowrap; }
+.ot-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
 
-.bot-summary-totals {
+.ot-thumb-fallback {
+  font-size: 1.4rem;
+}
+
+.ot-summary-info  { flex: 1; min-width: 0; }
+
+.ot-summary-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gray-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ot-summary-sub {
+  font-size: 0.72rem;
+  color: var(--gray-400);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ot-summary-price {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  white-space: nowrap;
+}
+
+/* Totals */
+.ot-summary-totals {
   border-top: 1px solid var(--border);
   padding-top: 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
-.bot-total-row {
+.ot-total-row {
   display: flex;
   justify-content: space-between;
   font-size: 0.875rem;
   color: var(--gray-500);
 }
 
-.bot-total-grand { font-weight: 700; font-size: 0.95rem; color: var(--gray-900); }
-.bot-grand-val   { color: var(--brand-primary); }
-
-.bot-support-label {
-  font-size: 0.8rem;
-  color: var(--gray-400);
-  margin-bottom: 0.625rem;
+.ot-total-grand {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--gray-900);
+  padding-top: 0.25rem;
 }
 
-.bot-support-row {
+.ot-grand-val { color: var(--brand-accent); }
+
+/* Support buttons */
+.ot-support-box {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: 1rem;
+}
+
+.ot-support-label {
+  font-size: 0.8rem;
+  color: var(--gray-500);
+  margin-bottom: 0.75rem;
+  font-weight: 500;
+}
+
+.ot-support-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.5rem;
 }
 
-.bot-support-btn {
+.ot-support-btn {
   padding: 0.625rem 0.5rem;
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   font-size: 0.8rem;
-  font-weight: 700;
+  font-weight: 600;
   transition: all 0.15s;
+  cursor: pointer;
 }
 
-.bot-support-btn.outline {
+.ot-support-btn.outline {
   background: var(--surface);
   border: 1.5px solid var(--border);
   color: var(--gray-700);
 }
 
-.bot-support-btn.outline:hover {
+.ot-support-btn.outline:hover {
   border-color: var(--brand-primary);
   color: var(--brand-primary);
 }
 
-.bot-support-btn.filled {
+.ot-support-btn.filled {
   background: var(--brand-primary);
   color: white;
+  border: none;
 }
 
-.bot-support-btn.filled:hover { background: var(--brand-secondary); }
+.ot-support-btn.filled:hover {
+  background: var(--brand-secondary);
+  transform: translateY(-1px);
+}
 
-@media (max-width: 900px) {
-  .bot-view { flex-direction: column; }
-  .bot-summary-panel { width: 100%; position: static; }
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 960px) {
+  .ot-view           { flex-direction: column; }
+  .ot-summary-panel  { width: 100%; position: static; max-height: none; }
+}
+
+@media (max-width: 600px) {
+  .ot-tracker-card { padding: 1.25rem; }
+  .ot-map-wrap     { height: 180px; }
+  .ot-tracker-title { font-size: 1.25rem; }
 }
